@@ -1,5 +1,8 @@
 ﻿using Jobs.Domain.Enums;
+using Jobs.Domain.Events;
+using Jobs.Domain.Exceptions;
 using Jobs.Domain.ValueObjects;
+using SharedKernel.Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -7,7 +10,7 @@ using System.Text;
 
 namespace Jobs.Domain.Entities
 {
-    public class Job
+    public class Job : AggregateRoot
     {
         public Guid JobId { get; private set; }
         public Guid CustomerId { get; private set; }
@@ -34,7 +37,7 @@ namespace Jobs.Domain.Entities
             CreatedAt = DateTime.UtcNow;
             Status = JobStatus.Created;
 
-            //AddDomainEvent(new JobCreatedEvent(Id));
+            AddDomainEvent(new JobCreatedEvent(JobId));
         }
 
         // ------------------------------------------------------------
@@ -43,12 +46,12 @@ namespace Jobs.Domain.Entities
         public void AssignTechnician(Guid technicianId)
         {
             if (Status == JobStatus.Completed || Status == JobStatus.Canceled)
-                throw new Exception("Cannot assign a technician to a completed or canceled job.");
+                throw new InvalidJobOperationException("Cannot assign a technician to a completed or canceled job.");
 
             AssignedTechnicianId = technicianId;
             Status = JobStatus.Assigned;
 
-            //AddDomainEvent(new JobAssignedEvent(Id, technicianId));
+            AddDomainEvent(new JobAssignedEvent(JobId, technicianId));
         }
 
         // ------------------------------------------------------------
@@ -57,15 +60,15 @@ namespace Jobs.Domain.Entities
         public void Schedule(DateTime scheduledFor)
         {
             if (scheduledFor < DateTime.UtcNow)
-                throw new Exception("Cannot schedule a job in the past.");
+                throw new InvalidJobOperationException("Cannot schedule a job in the past.");
 
             if (Status == JobStatus.Completed || Status == JobStatus.Canceled)
-                throw new Exception("Cannot schedule a completed or canceled job.");
+                throw new InvalidJobOperationException("Cannot schedule a completed or canceled job.");
 
             ScheduledFor = scheduledFor;
             Status = JobStatus.Scheduled;
 
-            //AddDomainEvent(new JobScheduledEvent(Id, scheduledFor));
+            AddDomainEvent(new JobScheduledEvent(JobId, scheduledFor));
         }
 
         // ------------------------------------------------------------
@@ -77,7 +80,35 @@ namespace Jobs.Domain.Entities
             Attachments.Add(attachment);
 
             // Optional: domain event for notifications or auditing
-            // AddDomainEvent(new AttachmentAddedEvent(Id, attachment.Id));
+            //AddDomainEvent(new AttachmentAddedEvent(JobId, attachment.Id));
+        }
+
+        // ------------------------------------------------------------
+        // Remove Attachment
+        // ------------------------------------------------------------
+        public void RemoveAttachment(Guid attachmentId)
+        {
+            var attachment = Attachments.FirstOrDefault(a => a.Id == attachmentId)
+                ?? throw new InvalidJobOperationException("Attachment not found.");
+
+            attachment.Delete();
+
+            // Optional domain event
+            // AddDomainEvent(new AttachmentRemovedEvent(Id, attachmentId));
+        }
+
+        // ------------------------------------------------------------
+        // Replace Attachment
+        // ------------------------------------------------------------
+        public void ReplaceAttachment(Guid attachmentId, string newFileName, string newUrl)
+        {
+            var attachment = Attachments.FirstOrDefault(a => a.Id == attachmentId)
+                ?? throw new InvalidJobOperationException("Attachment not found.");
+
+            attachment.Replace(newFileName, newUrl);
+
+            // Optional domain event
+            // AddDomainEvent(new AttachmentReplacedEvent(Id, attachmentId));
         }
 
         // ------------------------------------------------------------
@@ -85,7 +116,7 @@ namespace Jobs.Domain.Entities
         // ------------------------------------------------------------
         public void AddChecklistItem(string description, bool isRequired = false)
         {
-            var item = new ChecklistItem(Guid.NewGuid(), description, isRequired, null, null);
+            var item = new ChecklistItem(Guid.NewGuid(), description, isRequired, false, null);
             Checklist.Add(item);
         }
 
@@ -94,8 +125,8 @@ namespace Jobs.Domain.Entities
         // ------------------------------------------------------------
         public void CompleteChecklistItem(Guid itemId)
         {
-            var item = Checklist.FirstOrDefault(x => x.Id == itemId)
-                ?? throw new Exception("Checklist item not found.");
+            var item = Checklist.FirstOrDefault(x => x.ChecklistItemId == itemId)
+                ?? throw new InvalidJobOperationException("Checklist item not found.");
 
             item.MarkCompleted();
         }
@@ -106,14 +137,15 @@ namespace Jobs.Domain.Entities
         public void MarkCompleted()
         {
             if (Status == JobStatus.Canceled)
-                throw new Exception("Cannot complete a canceled job.");
+                throw new InvalidJobOperationException("Cannot complete a canceled job.");
 
-            if (Checklist.Any(x => x.IsRequired && !x.IsCompleted))
-                throw new Exception("Cannot complete job until all required checklist items are completed.");
+            if (Checklist.Any(x => x.IsRequired && (bool)!x.IsCompleted))
+                throw new InvalidJobOperationException("Cannot complete job until all required checklist items are completed.");
+
 
             Status = JobStatus.Completed;
 
-            //AddDomainEvent(new JobCompletedEvent(Id));
+            AddDomainEvent(new JobCompletedEvent(JobId));
         }
 
         // ------------------------------------------------------------
@@ -122,12 +154,15 @@ namespace Jobs.Domain.Entities
         public void MarkCanceled(string reason)
         {
             if (Status == JobStatus.Completed)
-                throw new Exception("Cannot cancel a completed job.");
+                throw new InvalidJobOperationException("Cannot cancel a completed job.");
 
             Status = JobStatus.Canceled;
 
-            //AddDomainEvent(new JobCanceledEvent(Id, reason));
+            AddDomainEvent(new JobCanceledEvent(JobId, reason));
         }
+
+
+
 
     }
 }
