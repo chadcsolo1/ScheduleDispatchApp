@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/Jobs/">
+    <Project Path="Jobs.Application/Jobs.Application.csproj" />
+    <Project Path="Jobs.Domain/Jobs.Domain.csproj" />
+    <Project Path="Jobs.Infrastructure/Jobs.Infrastructure.csproj" />
+  </Folder>
+  <Project Path="ScheduleDispatch.Web/ScheduleDispatch.Web.Client/ScheduleDispatch.Web.Client.csproj" />
+  <Project Path="ScheduleDispatch.Web/ScheduleDispatch.Web/ScheduleDispatch.Web.csproj" />
+</Solution>
