@@ -5,8 +5,8 @@ using System.Text;
 namespace Jobs.Domain.ValueObjects
 {
     public record JobType(
-        string Name,
-        string Category,
-        TimeSpan EstimatedDuration
+        string JobTypeName,
+        string JobTypeCategory,
+        TimeSpan JobTypeEstimatedDuration
         );
 }
