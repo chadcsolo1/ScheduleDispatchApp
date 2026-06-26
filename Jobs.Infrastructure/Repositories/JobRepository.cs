@@ -32,5 +32,12 @@ namespace Jobs.Infrastructure.Repositories
             _context.Jobs.Update(job);
             await _context.SaveChangesAsync(cancellationToken);
         }
+
+        public async Task<Job?> GetByIdAsync(Guid jobId, CancellationToken cancellationToken = default)
+        {
+            return await _context.Jobs.Include(j => j.Checklist)
+                                      .Include(j => j.Attachments)
+                                     .FirstOrDefaultAsync(j => j.JobId == jobId, cancellationToken);
+        }
     }
 }

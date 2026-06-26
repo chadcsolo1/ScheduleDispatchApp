@@ -7,7 +7,7 @@ namespace Jobs.Domain.Interfaces
 {
     public interface IJobRepository
     {
-        //Task<Job?> GetByIdAsync(Guid jobId, CancellationToken cancellationToken = default);
+        Task<Job?> GetByIdAsync(Guid jobId, CancellationToken cancellationToken = default);
 
         Task AddAsync(Job job, CancellationToken cancellationToken = default);
 
