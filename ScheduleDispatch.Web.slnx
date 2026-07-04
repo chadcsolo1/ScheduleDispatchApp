@@ -7,6 +7,6 @@
   <Folder Name="/Shared/">
     <Project Path="SharedKernel/SharedKernel.csproj" />
   </Folder>
-  <Project Path="ScheduleDispatch.Web/ScheduleDispatch.Web.Client/ScheduleDispatch.Web.Client.csproj" />
-  <Project Path="ScheduleDispatch.Web/ScheduleDispatch.Web/ScheduleDispatch.Web.csproj" />
+  <Project Path="ScheduleDispatch.Web.Client/ScheduleDispatch.Web.Client.csproj" />
+  <Project Path="ScheduleDispatch.Web/ScheduleDispatch.Web.csproj" />
 </Solution>
