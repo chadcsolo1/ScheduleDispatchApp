@@ -5,6 +5,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Jobs.Infrastructure.Services.FileStorage;
+using Jobs.Domain.Interfaces;
+using Jobs.Infrastructure.Repositories;
+using Jobs.Infrastructure.Persistence;
 
 namespace Jobs.Infrastructure.Extensions
 {
@@ -19,6 +22,10 @@ namespace Jobs.Infrastructure.Extensions
             services.AddDbContext<JobsDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("JobsDb")));
 
+            services.AddScoped<IJobRepository, JobRepository>();
+            services.AddScoped<IJobReadRepository, JobReadRepository>();
+            services.AddScoped<IUnitOfWork, EfUnitOfWork>();
+
             if (env.IsDevelopment())
             {
                 services.AddScoped<IFileStorageService, LocalFileStorageService>();
@@ -26,6 +33,7 @@ namespace Jobs.Infrastructure.Extensions
             {
                 //services.AddScoped<IFileStorageService, AzureBlobFileStorageService>();
             }
+
 
             return services;
         }

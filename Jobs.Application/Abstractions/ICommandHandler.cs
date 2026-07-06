@@ -4,8 +4,8 @@ using System.Text;
 
 namespace Jobs.Application.Abstractions
 {
-    public interface ICommandHandler<TCommand>
+    public interface ICommandHandler<TCommand, TResult>
     {
-        Task Handle(TCommand command, CancellationToken cancellationToken);
+        Task<TResult> Handle(TCommand command, CancellationToken cancellationToken);
     }
 }

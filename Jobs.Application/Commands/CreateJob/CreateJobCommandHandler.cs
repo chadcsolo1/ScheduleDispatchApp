@@ -10,7 +10,7 @@ using System.Text;
 
 namespace Jobs.Application.Commands.CreateJob
 {
-    public sealed class CreateJobCommandHandler
+    public sealed class CreateJobCommandHandler : ICommandHandler<CreateJobCommand, JobDto>
     {
         private readonly IJobRepository _jobRepository;
         private readonly IUnitOfWork _unitOfWork;

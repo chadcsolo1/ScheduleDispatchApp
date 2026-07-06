@@ -1,4 +1,5 @@
-﻿using Jobs.Application.DTOs;
+﻿using Jobs.Application.Abstractions;
+using Jobs.Application.DTOs;
 using Jobs.Application.Mappings;
 using Jobs.Domain.Interfaces;
 using System;
@@ -7,7 +8,7 @@ using System.Text;
 
 namespace Jobs.Application.Queries.GetJobsForCustomer
 {
-    public sealed class GetJobsForCustomerQueryHandler
+    public sealed class GetJobsForCustomerQueryHandler : IQueryHandler<GetJobsForCustomerQuery, IReadOnlyList<JobDto>>
     {
         private readonly IJobReadRepository _jobReadRepository;
 
