@@ -15,10 +15,10 @@ namespace Jobs.Application.Dispatching
             _serviceProvider = serviceProvider;
         }
 
-        public async Task DispatchAsync<TCommand>(TCommand command, CancellationToken cancellationToken = default)
+        public async Task<TResult> DispatchAsync<TCommand, TResult>(TCommand command, CancellationToken cancellationToken = default)
         {
-            var handler = _serviceProvider.GetRequiredService<ICommandHandler<TCommand>>();
-            await handler.Handle(command, cancellationToken);
+            var handler = _serviceProvider.GetRequiredService<ICommandHandler<TCommand, TResult>>();
+            return await handler.Handle(command, cancellationToken);
         }
     }
 }

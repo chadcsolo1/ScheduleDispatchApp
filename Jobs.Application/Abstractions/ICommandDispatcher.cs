@@ -6,6 +6,6 @@ namespace Jobs.Application.Abstractions
 {
     public interface ICommandDispatcher
     {
-        Task DispatchAsync<TCommand>(TCommand command, CancellationToken cancellationToken = default);
+        Task<TResult> DispatchAsync<TCommand, TResult>(TCommand command, CancellationToken cancellationToken = default);
     }
 }

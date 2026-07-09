@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/API/">
+    <Project Path="ScheduleDispatch.API/ScheduleDispatch.API.csproj" Id="cf2f8b4d-5f80-4013-9406-822b2e239ffc" />
+  </Folder>
   <Folder Name="/Jobs/">
     <Project Path="Jobs.Application/Jobs.Application.csproj" />
     <Project Path="Jobs.Domain/Jobs.Domain.csproj" />
