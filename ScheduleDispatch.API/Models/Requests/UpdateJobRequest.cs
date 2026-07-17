@@ -1,6 +1,6 @@
 ﻿namespace ScheduleDispatch.API.Models.Requests
 {
-    public sealed class UpdateJobResponse
+    public sealed class UpdateJobRequest
     {
         public string Description { get; init; } = string.Empty;
 
