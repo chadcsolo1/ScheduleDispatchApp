@@ -16,6 +16,14 @@ namespace Jobs.Infrastructure.Repositories
         {
             _context = context;
         }
+
+        public async Task<IReadOnlyList<Job>> GetAllAsync(CancellationToken cancellationToken = default)
+        {
+            return await _context.Jobs.Include(j => j.Checklist)
+                                      .Include(j => j.Attachments)
+                                      .ToListAsync(cancellationToken);
+        }
+
         public async Task<Job?> GetByIdAsync(Guid jobId, CancellationToken cancellationToken = default)
         {
             return await _context.Jobs.Include(j => j.Checklist)

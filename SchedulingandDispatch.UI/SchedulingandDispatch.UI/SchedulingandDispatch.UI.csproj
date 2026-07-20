@@ -8,9 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ScheduleDispatch.UI.Services\ScheduleDispatch.UI.Services.csproj" />
-    <ProjectReference Include="..\ScheduleDispatch.Web.Client\ScheduleDispatch.Web.Client.csproj" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="10.0.8" />
+    <ProjectReference Include="..\SchedulingandDispatch.UI.Client\SchedulingandDispatch.UI.Client.csproj" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="10.0.10" />
   </ItemGroup>
 
 </Project>

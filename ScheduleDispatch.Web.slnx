@@ -10,6 +10,7 @@
   <Folder Name="/Shared/">
     <Project Path="SharedKernel/SharedKernel.csproj" />
   </Folder>
+  <Project Path="ScheduleDispatch.UI.Services/ScheduleDispatch.UI.Services.csproj" Id="553447c1-c966-427d-ab4b-b5cacf34b90a" />
   <Project Path="ScheduleDispatch.Web.Client/ScheduleDispatch.Web.Client.csproj" />
   <Project Path="ScheduleDispatch.Web/ScheduleDispatch.Web.csproj" />
 </Solution>

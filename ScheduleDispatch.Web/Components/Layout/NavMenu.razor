@@ -1,0 +1,54 @@
+@inject NavigationManager Navigation
+
+<nav class="navbar">
+    <div class="navbar-container">
+        <div class="navbar-brand">
+            <a href="/" class="brand-link">
+                <span class="brand-icon">📋</span>
+                <span class="brand-text">Schedule & Dispatch</span>
+            </a>
+        </div>
+
+        <button class="navbar-toggle" @onclick="ToggleNavMenu">
+            <span class="navbar-toggle-icon"></span>
+        </button>
+
+        <div class="navbar-menu @NavMenuCssClass">
+            <NavLink class="nav-item" href="/" Match="NavLinkMatch.All">
+                <span class="nav-icon">🏠</span>
+                <span class="nav-text">Home</span>
+            </NavLink>
+
+            <NavLink class="nav-item" href="/jobs-test">
+                <span class="nav-icon">📝</span>
+                <span class="nav-text">Jobs</span>
+            </NavLink>
+
+            <NavLink class="nav-item" href="/schedule">
+                <span class="nav-icon">📅</span>
+                <span class="nav-text">Schedule</span>
+            </NavLink>
+
+            <NavLink class="nav-item" href="/dispatch">
+                <span class="nav-icon">🚚</span>
+                <span class="nav-text">Dispatch</span>
+            </NavLink>
+
+            <NavLink class="nav-item" href="/reports">
+                <span class="nav-icon">📊</span>
+                <span class="nav-text">Reports</span>
+            </NavLink>
+        </div>
+    </div>
+</nav>
+
+@code {
+    private bool collapseNavMenu = true;
+
+    private string? NavMenuCssClass => collapseNavMenu ? "collapsed" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+}

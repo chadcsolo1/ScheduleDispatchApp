@@ -1,0 +1,32 @@
+﻿@page "/jobs-test"
+@using ScheduleDispatch.UI.Services.Jobs
+@using ScheduleDispatch.UI.Services.Jobs.Response
+@inject JobsService JobsService
+
+
+<h3>Jobs Test</h3>
+
+<button class="btn btn-primary" @onclick="LoadJobs">Load Jobs</button>
+
+@if (jobs is null)
+{
+    <p>No jobs loaded yet.</p>
+} else
+{
+    <ul>
+        @foreach (var job in jobs)
+        {
+            <li>@job.Id - @job.Description (@job.Status)</li>
+        }
+    </ul>
+}
+
+
+@code {
+    private IEnumerable<JobResponse>? jobs;
+
+    private async Task LoadJobs()
+    {
+        jobs = await JobsService.GetJobsAsync();
+    }
+}

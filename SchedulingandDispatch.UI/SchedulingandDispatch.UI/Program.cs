@@ -1,17 +1,10 @@
-using ScheduleDispatch.UI.Services.Jobs;
-using ScheduleDispatch.Web.Components;
+using SchedulingandDispatch.UI.Components;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents()
     .AddInteractiveWebAssemblyComponents();
-
-builder.Services.AddHttpClient<JobsService>(client =>
-{
-    client.BaseAddress = new Uri("https://localhost:5001"); // your API URL
-});
 
 var app = builder.Build();
 
@@ -19,8 +12,7 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseWebAssemblyDebugging();
-}
-else
+} else
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
@@ -33,8 +25,7 @@ app.UseAntiforgery();
 
 app.MapStaticAssets();
 app.MapRazorComponents<App>()
-    .AddInteractiveServerRenderMode()
     .AddInteractiveWebAssemblyRenderMode()
-    .AddAdditionalAssemblies(typeof(ScheduleDispatch.Web.Client._Imports).Assembly);
+    .AddAdditionalAssemblies(typeof(SchedulingandDispatch.UI.Client._Imports).Assembly);
 
 app.Run();
