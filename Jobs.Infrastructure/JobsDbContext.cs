@@ -15,7 +15,8 @@ namespace Jobs.Infrastructure
         }
 
             public DbSet<Job> Jobs => Set<Job>();
-            public DbSet<ChecklistItem> CheckListItems => Set<ChecklistItem>();
+            // ChecklistItem is configured as an owned entity in JobConfiguration
+            // public DbSet<ChecklistItem> CheckListItems => Set<ChecklistItem>();
             public DbSet<Attachment> Attachments => Set<Attachment>();
 
             protected override void OnModelCreating(ModelBuilder modelBuilder)

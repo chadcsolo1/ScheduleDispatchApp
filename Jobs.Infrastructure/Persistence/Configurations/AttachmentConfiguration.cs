@@ -9,32 +9,32 @@ namespace Jobs.Infrastructure.Persistence.Configurations
 {
     public sealed class AttachmentConfiguration : IEntityTypeConfiguration<Attachment>
     {
-    public void Configure(EntityTypeBuilder<Attachment> builder)
-    {
-        builder.ToTable("Attachments");
+        public void Configure(EntityTypeBuilder<Attachment> builder)
+        {
+            builder.ToTable("Attachments");
 
-        builder.HasKey(t => t.Id);
+            builder.HasKey(t => t.Id);
 
-         // Properties
-        builder.Property(a => a.FileName)
-            .HasMaxLength(255)
-            .IsRequired();
+            // Properties
+            builder.Property(a => a.FileName)
+                .HasMaxLength(255)
+                .IsRequired();
 
-        builder.Property(a => a.Url)
-            .HasMaxLength(2048) // URLs can be long
-            .IsRequired();
+            builder.Property(a => a.Url)
+                .HasMaxLength(2048)
+                .IsRequired();
 
-        builder.Property(a => a.UploadedAt)
-            .IsRequired();
+            builder.Property(a => a.UploadedAt)
+                .IsRequired();
 
-        builder.Property(a => a.IsDeleted)
-            .IsRequired();
+            builder.Property(a => a.IsDeleted)
+                .IsRequired();
 
-        builder.Property(a => a.DeletedAt)
-            .IsRequired(false);
+            builder.Property(a => a.DeletedAt)
+                .IsRequired(false);
 
-        // Optional: Global query filter for soft delete
-        builder.HasQueryFilter(a => !a.IsDeleted);
-    }
+            // Global query filter for soft delete
+            builder.HasQueryFilter(a => !a.IsDeleted);
+        }
     }
 }

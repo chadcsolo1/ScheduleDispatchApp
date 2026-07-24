@@ -116,7 +116,7 @@ namespace Jobs.Domain.Entities
         // ------------------------------------------------------------
         public void AddChecklistItem(string description, bool isRequired = false)
         {
-            var item = new ChecklistItem(Guid.NewGuid(), description, isRequired, false, null);
+            var item = new ChecklistItem(Guid.NewGuid(), description, isRequired);
             Checklist.Add(item);
         }
 
