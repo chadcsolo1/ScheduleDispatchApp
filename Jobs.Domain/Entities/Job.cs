@@ -41,6 +41,21 @@ namespace Jobs.Domain.Entities
         }
 
         // ------------------------------------------------------------
+        // Update Job Details
+        // ------------------------------------------------------------
+        public void UpdateDetails(string description, Location location, JobType jobType, List<Skill> requiredSkills)
+        {
+            if (Status == JobStatus.Completed || Status == JobStatus.Canceled)
+                throw new InvalidJobOperationException("Cannot update a completed or canceled job.");
+            Description = description;
+            Location = location;
+            JobType = jobType;
+            RequiredSkills = requiredSkills;
+            //AddDomainEvent(new JobUpdatedEvent(JobId));
+        }
+
+
+        // ------------------------------------------------------------
         // Assign Technician
         // ------------------------------------------------------------
         public void AssignTechnician(Guid technicianId)

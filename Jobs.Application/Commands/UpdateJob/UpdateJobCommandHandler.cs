@@ -30,6 +30,7 @@ namespace Jobs.Application.Commands.UpdateJob
                 throw new InvalidOperationException($"Job with ID {command.JobId} not found.");
             }
 
+
             // Update the job properties based on the command
             await _jobRepository.UpdateAsync(existingJob, cancellationToken);
 

@@ -56,7 +56,8 @@ namespace ScheduleDispatch.API.Controllers
                 Status = result.Status
             };
 
-            return CreatedAtAction(nameof(GetJobByIdQuery), new { id = result.Id }, response);
+            //return CreatedAtAction(nameof(GetJobByIdQuery), new { id = result.Id }, response);
+            return Created($"/api/jobs/{result.Id}", response);
         }
 
         // ------------------------------------------------------------

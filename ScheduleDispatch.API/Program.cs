@@ -1,3 +1,4 @@
+using Jobs.Application.Extensions;
 using Jobs.Infrastructure.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +12,9 @@ builder.Services.AddOpenApi();
 //Swagger
 builder.Services.AddSwaggerGen();
 builder.Services.AddEndpointsApiExplorer();
+
+// Register Application Layer (Commands, Queries, Dispatchers)
+builder.Services.AddJobsApplication();
 
 // Register Infrastructure (DbContext, Repositories, etc.)
 builder.Services.AddJobsPersistence(builder.Configuration);
