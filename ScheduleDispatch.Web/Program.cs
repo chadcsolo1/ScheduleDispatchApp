@@ -10,7 +10,7 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddHttpClient<JobsService>(client =>
 {
-    client.BaseAddress = new Uri("https://localhost:5001"); // your API URL
+    client.BaseAddress = new Uri("https://localhost:7218"); // your API URL
 });
 
 var app = builder.Build();

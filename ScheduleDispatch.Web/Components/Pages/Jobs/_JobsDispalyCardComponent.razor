@@ -1,0 +1,432 @@
+﻿
+@using ScheduleDispatch.UI.Services.Jobs
+
+<div class="job-card">
+    <div class="job-card-header">
+        <div class="job-header-left">
+            <h3 class="job-title">@Job.Description</h3>
+            <span class="job-id">Job #@Job.Id.ToString().Substring(0, 8)</span>
+        </div>
+        <div class="job-header-right">
+            <span class="badge badge-@GetStatusClass()">@Job.Status</span>
+        </div>
+    </div>
+
+    <div class="job-card-body">
+        <!-- Customer & Dates Section -->
+        <div class="job-section">
+            <div class="section-row">
+                <div class="info-group">
+                    <i class="bi bi-person-badge"></i>
+                    <div class="info-content">
+                        <span class="info-label">Customer ID</span>
+                        <span class="info-value">@Job.CustomerId.ToString().Substring(0, 8)</span>
+                    </div>
+                </div>
+                <div class="info-group">
+                    <i class="bi bi-calendar-plus"></i>
+                    <div class="info-content">
+                        <span class="info-label">Created</span>
+                        <span class="info-value">@Job.CreatedAt.ToString("MMM dd, yyyy")</span>
+                    </div>
+                </div>
+            </div>
+
+            @if (Job.ScheduledFor.HasValue)
+            {
+                <div class="section-row">
+                    <div class="info-group">
+                        <i class="bi bi-calendar-event"></i>
+                        <div class="info-content">
+                            <span class="info-label">Scheduled For</span>
+                            <span class="info-value">@Job.ScheduledFor.Value.ToString("MMM dd, yyyy hh:mm tt")</span>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            @if (Job.AssignedTechnicianId != Guid.Empty)
+            {
+                <div class="section-row">
+                    <div class="info-group">
+                        <i class="bi bi-person-check"></i>
+                        <div class="info-content">
+                            <span class="info-label">Assigned Technician</span>
+                            <span class="info-value">@Job.AssignedTechnicianId.ToString().Substring(0, 8)</span>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Location Section -->
+        @* @if (Job.Location != null)
+        {
+            <div class="job-section">
+                <h4 class="section-title">
+                    <i class="bi bi-geo-alt"></i> Location
+                </h4>
+                <div class="location-details">
+                    <p>@Job.Location.AddressLine1</p>
+                    @if (!string.IsNullOrWhiteSpace(Job.Location.AddressLine2))
+                    {
+                        <p>@Job.Location.AddressLine2</p>
+                    }
+                    <p>@Job.Location.City, @Job.Location.State @Job.Location.ZipCode</p>
+                </div>
+            </div>
+        } *@
+
+        <!-- Job Type Section -->
+        @* @if (Job.JobType != null)
+        {
+            <div class="job-section">
+                <h4 class="section-title">
+                    <i class="bi bi-briefcase"></i> Job Type
+                </h4>
+                <div class="jobtype-details">
+                    <div class="info-row">
+                        <span class="info-label">Type:</span>
+                        <span class="info-value-inline">@Job.JobType.JobTypeName</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Category:</span>
+                        <span class="info-value-inline">@Job.JobType.JobTypeCategory</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Est. Duration:</span>
+                        <span class="info-value-inline">@FormatDuration(Job.JobType.JobTypeEstimatedDuration)</span>
+                    </div>
+                </div>
+            </div>
+        } *@
+
+        <!-- Required Skills Section -->
+        @if (Job.RequiredSkills != null && Job.RequiredSkills.Any())
+        {
+            <div class="job-section">
+                <h4 class="section-title">
+                    <i class="bi bi-gear"></i> Required Skills
+                </h4>
+                <div class="skills-container">
+                    @foreach (var skill in Job.RequiredSkills)
+                    {
+                        <span class="skill-tag">@skill</span>
+                    }
+                </div>
+            </div>
+        }
+
+        <!-- Checklist Section -->
+        @* @if (Job.Checklist != null && Job.Checklist.Any())
+        {
+            <div class="job-section">
+                <h4 class="section-title">
+                    <i class="bi bi-check-square"></i> Checklist (@Job.Checklist.Count(c => c.IsCompleted)/@Job.Checklist.Count)
+                </h4>
+                <div class="checklist-container">
+                    @foreach (var item in Job.Checklist)
+                    {
+                        <div class="checklist-item @(item.IsCompleted ? "completed" : "")">
+                            <i class="bi @(item.IsCompleted ? "bi-check-circle-fill" : "bi-circle")"></i>
+                            <span>@item.Description</span>
+                            @if (item.IsRequired)
+                            {
+                                <span class="required-badge">Required</span>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        } *@
+
+        <!-- Attachments Section -->
+        @* @if (Job.Attachments != null && Job.Attachments.Any())
+        {
+            <div class="job-section">
+                <h4 class="section-title">
+                    <i class="bi bi-paperclip"></i> Attachments (@Job.Attachments.Count)
+                </h4>
+                <div class="attachments-container">
+                    @foreach (var attachment in Job.Attachments)
+                    {
+                        <div class="attachment-item">
+                            <i class="bi bi-file-earmark"></i>
+                            <span>@attachment.FileName</span>
+                        </div>
+                    }
+                </div>
+            </div>
+        } *@
+    </div>
+</div>
+
+<style>
+    .job-card {
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        transition: box-shadow 0.3s ease;
+        margin-bottom: 1rem;
+    }
+
+    .job-card:hover {
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    .job-card-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+
+    .job-header-left {
+        flex: 1;
+    }
+
+    .job-title {
+        margin: 0 0 0.5rem 0;
+        font-size: 1.25rem;
+        font-weight: 600;
+    }
+
+    .job-id {
+        font-size: 0.875rem;
+        opacity: 0.9;
+    }
+
+    .badge {
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .badge-created { background: #6c757d; color: white; }
+    .badge-assigned { background: #007bff; color: white; }
+    .badge-scheduled { background: #17a2b8; color: white; }
+    .badge-inprogress { background: #ffc107; color: #000; }
+    .badge-completed { background: #28a745; color: white; }
+    .badge-canceled { background: #dc3545; color: white; }
+
+    .job-card-body {
+        padding: 1.5rem;
+    }
+
+    .job-section {
+        margin-bottom: 1.5rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .job-section:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
+    }
+
+    .section-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .section-row {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .section-row:last-child {
+        margin-bottom: 0;
+    }
+
+    .info-group {
+        flex: 1;
+        display: flex;
+        gap: 0.75rem;
+        align-items: flex-start;
+    }
+
+    .info-group i {
+        font-size: 1.25rem;
+        color: #667eea;
+        margin-top: 0.25rem;
+    }
+
+    .info-content {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .info-label {
+        font-size: 0.75rem;
+        color: #6c757d;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.25rem;
+    }
+
+    .info-value {
+        font-size: 0.875rem;
+        color: #212529;
+        font-weight: 500;
+    }
+
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+    }
+
+    .info-value-inline {
+        font-weight: 500;
+        color: #212529;
+    }
+
+    .location-details {
+        background: #f8f9fa;
+        padding: 1rem;
+        border-radius: 8px;
+        border-left: 4px solid #667eea;
+    }
+
+    .location-details p {
+        margin: 0.25rem 0;
+        color: #495057;
+    }
+
+    .jobtype-details {
+        background: #f8f9fa;
+        padding: 1rem;
+        border-radius: 8px;
+    }
+
+    .skills-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .skill-tag {
+        background: #e7f3ff;
+        color: #0066cc;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
+
+    .checklist-container {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .checklist-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+        transition: background 0.2s;
+    }
+
+    .checklist-item:hover {
+        background: #e9ecef;
+    }
+
+    .checklist-item.completed {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .checklist-item i {
+        font-size: 1.25rem;
+        color: #667eea;
+    }
+
+    .checklist-item.completed i {
+        color: #28a745;
+    }
+
+    .required-badge {
+        margin-left: auto;
+        background: #ffc107;
+        color: #000;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    .attachments-container {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .attachment-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+        transition: background 0.2s;
+    }
+
+    .attachment-item:hover {
+        background: #e9ecef;
+        cursor: pointer;
+    }
+
+    .attachment-item i {
+        font-size: 1.25rem;
+        color: #667eea;
+    }
+
+    @@media (max-width: 768px) {
+        .section-row {
+            flex-direction: column;
+        }
+    }
+</style>
+
+@code {
+    [Parameter]
+    public JobDto Job { get; set; } = null!;
+
+    private string GetStatusClass()
+    {
+        return Job.Status?.ToLower() switch
+        {
+            "created" => "created",
+            "assigned" => "assigned",
+            "scheduled" => "scheduled",
+            "inprogress" => "inprogress",
+            "completed" => "completed",
+            "canceled" => "canceled",
+            _ => "created"
+        };
+    }
+
+    private string FormatDuration(TimeSpan duration)
+    {
+        if (duration.TotalHours >= 1)
+        {
+            return $"{duration.TotalHours:F1} hours";
+        }
+        return $"{duration.TotalMinutes:F0} minutes";
+    }
+}

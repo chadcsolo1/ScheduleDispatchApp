@@ -13,17 +13,20 @@
     <p>No jobs loaded yet.</p>
 } else
 {
-    <ul>
-        @foreach (var job in jobs)
-        {
-            <li>@job.Id - @job.Description (@job.Status)</li>
-        }
-    </ul>
+    @foreach (var job in jobs)
+    {
+        <_JobsDispalyCardComponent Job="job"></_JobsDispalyCardComponent>
+    }
 }
 
 
 @code {
     private IEnumerable<JobResponse>? jobs;
+
+    protected override async Task OnInitializedAsync()
+    {
+        jobs = await JobsService.GetJobsAsync();
+    }
 
     private async Task LoadJobs()
     {
