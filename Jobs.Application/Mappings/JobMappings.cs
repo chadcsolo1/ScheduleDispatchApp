@@ -1,10 +1,7 @@
-﻿using Jobs.Application.Commands.UpdateJob;
-using Jobs.Application.DTOs;
+﻿using Jobs.Application.DTOs;
 using Jobs.Domain.Entities;
 using System;
 using System.Collections.Generic;
-using System.Net.Mail;
-using System.Net.NetworkInformation;
 using System.Text;
 
 namespace Jobs.Application.Mappings
@@ -37,10 +34,7 @@ namespace Jobs.Application.Mappings
             };
         }
 
-        public static void MapJobUpdate(Job job, UpdateJobCommand command)
-        {
-            job.Description = command.Description;
-        }
+
 
         public static ChecklistItemDto ToDto(ChecklistItem item)
         {

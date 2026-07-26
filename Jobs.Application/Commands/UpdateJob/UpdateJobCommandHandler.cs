@@ -2,6 +2,7 @@
 using Jobs.Application.DTOs;
 using Jobs.Application.Mappings;
 using Jobs.Domain.Interfaces;
+using Jobs.Domain.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -30,8 +31,28 @@ namespace Jobs.Application.Commands.UpdateJob
                 throw new InvalidOperationException($"Job with ID {command.JobId} not found.");
             }
 
+            // Create value objects from command data
+            var location = new Location(
+                command.AddressLine1,
+                command.AddressLine2,
+                command.City,
+                command.State,
+                command.ZipCode
+            );
+
+            var jobType = new JobType(
+                command.JobTypeName,
+                command.JobTypeCategory,
+                command.JobTypeEstimatedDuration
+            );
+
+             var requiredSkills = command.RequiredSkills?
+            .Select(skillName => new Skill(skillName))
+            .ToList();
+
 
             // Update the job properties based on the command
+            existingJob.UpdateDetails(command.Description, location, jobType, requiredSkills);
             await _jobRepository.UpdateAsync(existingJob, cancellationToken);
 
             // Save the changes to the repository

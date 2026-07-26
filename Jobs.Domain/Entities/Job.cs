@@ -51,7 +51,7 @@ namespace Jobs.Domain.Entities
             Location = location;
             JobType = jobType;
             RequiredSkills = requiredSkills;
-            //AddDomainEvent(new JobUpdatedEvent(JobId));
+            AddDomainEvent(new JobUpdatedEvent(JobId));
         }
 
 
