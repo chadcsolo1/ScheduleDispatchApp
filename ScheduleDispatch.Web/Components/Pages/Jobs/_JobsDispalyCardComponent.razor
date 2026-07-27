@@ -1,20 +1,20 @@
-﻿
-@using ScheduleDispatch.UI.Services.Jobs
+﻿@using ScheduleDispatch.UI.Services.Jobs.Response
 
-<div class="job-card">
-    <div class="job-card-header">
-        <div class="job-header-left">
-            <h3 class="job-title">@Job.Description</h3>
-            <span class="job-id">Job #@Job.Id.ToString().Substring(0, 8)</span>
+
+<div class="Job-card">
+    <div class="Job-card-header">
+        <div class="Job-header-left">
+            <h3 class="Job-title">@Job.Description</h3>
+            <span class="Job-id">Job #@Job.Id.ToString().Substring(0, 8)</span>
         </div>
-        <div class="job-header-right">
+        <div class="Job-header-right">
             <span class="badge badge-@GetStatusClass()">@Job.Status</span>
         </div>
     </div>
 
-    <div class="job-card-body">
+    <div class="Job-card-body">
         <!-- Customer & Dates Section -->
-        <div class="job-section">
+        <div class="Job-section">
             <div class="section-row">
                 <div class="info-group">
                     <i class="bi bi-person-badge"></i>
@@ -62,7 +62,7 @@
         <!-- Location Section -->
         @* @if (Job.Location != null)
         {
-            <div class="job-section">
+            <div class="Job-section">
                 <h4 class="section-title">
                     <i class="bi bi-geo-alt"></i> Location
                 </h4>
@@ -80,11 +80,11 @@
         <!-- Job Type Section -->
         @* @if (Job.JobType != null)
         {
-            <div class="job-section">
+            <div class="Job-section">
                 <h4 class="section-title">
                     <i class="bi bi-briefcase"></i> Job Type
                 </h4>
-                <div class="jobtype-details">
+                <div class="Jobtype-details">
                     <div class="info-row">
                         <span class="info-label">Type:</span>
                         <span class="info-value-inline">@Job.JobType.JobTypeName</span>
@@ -104,7 +104,7 @@
         <!-- Required Skills Section -->
         @if (Job.RequiredSkills != null && Job.RequiredSkills.Any())
         {
-            <div class="job-section">
+            <div class="Job-section">
                 <h4 class="section-title">
                     <i class="bi bi-gear"></i> Required Skills
                 </h4>
@@ -120,7 +120,7 @@
         <!-- Checklist Section -->
         @* @if (Job.Checklist != null && Job.Checklist.Any())
         {
-            <div class="job-section">
+            <div class="Job-section">
                 <h4 class="section-title">
                     <i class="bi bi-check-square"></i> Checklist (@Job.Checklist.Count(c => c.IsCompleted)/@Job.Checklist.Count)
                 </h4>
@@ -143,7 +143,7 @@
         <!-- Attachments Section -->
         @* @if (Job.Attachments != null && Job.Attachments.Any())
         {
-            <div class="job-section">
+            <div class="Job-section">
                 <h4 class="section-title">
                     <i class="bi bi-paperclip"></i> Attachments (@Job.Attachments.Count)
                 </h4>
@@ -159,10 +159,22 @@
             </div>
         } *@
     </div>
+
+    <!-- Action Buttons Footer -->
+    <div class="job-card-footer">
+        <button class="btn-action btn-edit" @onclick="OnEditClick">
+            <i class="bi bi-pencil"></i>
+            <span>Edit</span>
+        </button>
+        <button class="btn-action btn-delete" @onclick="OnDeleteClick">
+            <i class="bi bi-trash"></i>
+            <span>Delete</span>
+        </button>
+    </div>
 </div>
 
 <style>
-    .job-card {
+    .Job-card {
         background: #ffffff;
         border-radius: 12px;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -171,11 +183,11 @@
         margin-bottom: 1rem;
     }
 
-    .job-card:hover {
+    .Job-card:hover {
         box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
     }
 
-    .job-card-header {
+    .Job-card-header {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
         padding: 1.5rem;
@@ -184,17 +196,17 @@
         align-items: flex-start;
     }
 
-    .job-header-left {
+    .Job-header-left {
         flex: 1;
     }
 
-    .job-title {
+    .Job-title {
         margin: 0 0 0.5rem 0;
         font-size: 1.25rem;
         font-weight: 600;
     }
 
-    .job-id {
+    .Job-id {
         font-size: 0.875rem;
         opacity: 0.9;
     }
@@ -214,17 +226,17 @@
     .badge-completed { background: #28a745; color: white; }
     .badge-canceled { background: #dc3545; color: white; }
 
-    .job-card-body {
+    .Job-card-body {
         padding: 1.5rem;
     }
 
-    .job-section {
+    .Job-section {
         margin-bottom: 1.5rem;
         padding-bottom: 1.5rem;
         border-bottom: 1px solid #e9ecef;
     }
 
-    .job-section:last-child {
+    .Job-section:last-child {
         margin-bottom: 0;
         padding-bottom: 0;
         border-bottom: none;
@@ -305,7 +317,7 @@
         color: #495057;
     }
 
-    .jobtype-details {
+    .Jobtype-details {
         background: #f8f9fa;
         padding: 1rem;
         border-radius: 8px;
@@ -396,16 +408,124 @@
         color: #667eea;
     }
 
+    /* Action Buttons Footer */
+    .job-card-footer {
+        display: flex;
+        gap: 0.75rem;
+        padding: 1rem 1.5rem;
+        background: #f8f9fa;
+        border-top: 1px solid #e9ecef;
+    }
+
+    .btn-action {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1rem;
+        border: none;
+        border-radius: 8px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .btn-action i {
+        font-size: 1rem;
+    }
+
+    .btn-edit {
+        background: #007bff;
+        color: white;
+    }
+
+    .btn-edit:hover {
+        background: #0056b3;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+    }
+
+    .btn-edit:active {
+        transform: translateY(0);
+    }
+
+    .btn-delete {
+        background: #dc3545;
+        color: white;
+    }
+
+    .btn-delete:hover {
+        background: #c82333;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+    }
+
+    .btn-delete:active {
+        transform: translateY(0);
+    }
+
+    @@media (max-width: 576px) {
+        .Job-card-body {
+            padding: 1rem;
+        }
+
+        .Job-section {
+            margin-bottom: 1.25rem;
+            padding-bottom: 1.25rem;
+        }
+
+        .section-title {
+            font-size: 0.875rem;
+        }
+
+        .info-group i {
+            font-size: 1.125rem;
+        }
+
+        .info-label {
+            font-size: 0.6875rem;
+        }
+
+        .info-value {
+            font-size: 0.8125rem;
+        }
+
+        .skills-container {
+            justify-content: flex-start;
+        }
+
+        .btn-action {
+            padding: 0.5rem 1rem;
+            font-size: 0.75rem;
+        }
+    }
+
     @@media (max-width: 768px) {
         .section-row {
             flex-direction: column;
+        }
+
+        .job-card-footer {
+            flex-direction: column;
+        }
+
+        .btn-action {
+            width: 100%;
         }
     }
 </style>
 
 @code {
     [Parameter]
-    public JobDto Job { get; set; } = null!;
+    public JobResponse Job { get; set; } = null!;
+
+    [Parameter]
+    public EventCallback<Guid> OnEdit { get; set; }
+
+    [Parameter]
+    public EventCallback<Guid> OnDelete { get; set; }
 
     private string GetStatusClass()
     {
@@ -428,5 +548,21 @@
             return $"{duration.TotalHours:F1} hours";
         }
         return $"{duration.TotalMinutes:F0} minutes";
+    }
+
+    private async Task OnEditClick()
+    {
+        if (OnEdit.HasDelegate)
+        {
+            await OnEdit.InvokeAsync(Job.Id);
+        }
+    }
+
+    private async Task OnDeleteClick()
+    {
+        if (OnDelete.HasDelegate)
+        {
+            await OnDelete.InvokeAsync(Job.Id);
+        }
     }
 }
