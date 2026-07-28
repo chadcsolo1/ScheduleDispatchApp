@@ -162,11 +162,11 @@
 
     <!-- Action Buttons Footer -->
     <div class="job-card-footer">
-        <button class="btn-action btn-edit" @onclick="OnEditClick">
+        <button type="button" class="btn-action btn-edit" @onclick="OnEditClick">
             <i class="bi bi-pencil"></i>
             <span>Edit</span>
         </button>
-        <button class="btn-action btn-delete" @onclick="OnDeleteClick">
+        <button type="button" class="btn-action btn-delete" @onclick="OnDeleteClick">
             <i class="bi bi-trash"></i>
             <span>Delete</span>
         </button>
@@ -552,14 +552,21 @@
 
     private async Task OnEditClick()
     {
+        Console.WriteLine($"Edit clicked for Job ID: {Job.Id}");
         if (OnEdit.HasDelegate)
         {
+            Console.WriteLine($"Invoking OnEdit callback with ID: {Job.Id}");
             await OnEdit.InvokeAsync(Job.Id);
+        }
+        else
+        {
+            Console.WriteLine("OnEdit has no delegate attached!");
         }
     }
 
     private async Task OnDeleteClick()
     {
+        Console.WriteLine($"Delete clicked for Job ID: {Job.Id}");
         if (OnDelete.HasDelegate)
         {
             await OnDelete.InvokeAsync(Job.Id);

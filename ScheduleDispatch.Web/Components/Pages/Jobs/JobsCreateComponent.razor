@@ -1,0 +1,650 @@
+﻿@page "/jobs/create"
+@using ScheduleDispatch.UI.Services.Jobs
+@using ScheduleDispatch.UI.Services.Jobs.Request
+@inject JobsService JobsService
+@inject NavigationManager Navigation
+
+<div class="create-job-container">
+    <div class="form-header">
+        <h2>
+            <i class="bi bi-plus-circle"></i>
+            Create New Job
+        </h2>
+        <p class="subtitle">Fill in the details below to create a new job</p>
+    </div>
+
+    <EditForm Model="@model" OnValidSubmit="HandleSubmit" class="job-form">
+
+        <!-- Job Details Section -->
+        <div class="form-section">
+            <div class="section-header">
+                <i class="bi bi-file-text"></i>
+                <h3>Job Details</h3>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group full-width">
+                    <label for="description">Description *</label>
+                    <InputTextArea id="description" @bind-Value="model.Description"
+                                   class="form-control" rows="3" 
+                                   placeholder="Enter job description..." />
+
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="customerId">Customer ID *</label>
+                    <InputText id="customerId" @bind-Value="model.CustomerId"
+                               class="form-control" 
+                               placeholder="Enter customer ID (GUID)" />
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Location Section -->
+        <div class="form-section">
+            <div class="section-header">
+                <i class="bi bi-geo-alt"></i>
+                <h3>Location</h3>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group full-width">
+                    <label for="addressLine1">Address Line 1 *</label>
+                    <InputText id="addressLine1" @bind-Value="model.AddressLine1"
+                               class="form-control" 
+                               placeholder="Street address" />
+
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group full-width">
+                    <label for="addressLine2">Address Line 2</label>
+                    <InputText id="addressLine2" @bind-Value="model.AddressLine2"
+                               class="form-control" 
+                               placeholder="Apartment, suite, etc. (optional)" />
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="city">City *</label>
+                    <InputText id="city" @bind-Value="model.City"
+                               class="form-control" 
+                               placeholder="City" />
+
+                </div>
+
+                <div class="form-group">
+                    <label for="state">State *</label>
+                    <InputText id="state" @bind-Value="model.State"
+                               class="form-control" 
+                               placeholder="State" />
+
+                </div>
+
+                <div class="form-group">
+                    <label for="zipCode">ZIP Code *</label>
+                    <InputNumber id="zipCode" @bind-Value="model.ZipCode"
+                                 class="form-control" 
+                                 placeholder="12345" />
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Job Type Section -->
+        <div class="form-section">
+            <div class="section-header">
+                <i class="bi bi-briefcase"></i>
+                <h3>Job Type</h3>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="jobTypeName">Job Type Name *</label>
+                    <InputText id="jobTypeName" @bind-Value="model.JobTypeName"
+                               class="form-control" 
+                               placeholder="e.g., Plumbing Repair" />
+
+                </div>
+
+                <div class="form-group">
+                    <label for="jobTypeCategory">Category *</label>
+                    <InputText id="jobTypeCategory" @bind-Value="model.JobTypeCategory"
+                               class="form-control" 
+                               placeholder="e.g., Maintenance" />
+
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="durationHours">Estimated Duration (Hours) *</label>
+                    <InputNumber id="durationHours" @bind-Value="durationHours" 
+                                 class="form-control" 
+                                 placeholder="0" 
+                                 min="0" />
+                </div>
+
+                <div class="form-group">
+                    <label for="durationMinutes">Duration (Minutes)</label>
+                    <InputNumber id="durationMinutes" @bind-Value="durationMinutes" 
+                                 class="form-control" 
+                                 placeholder="0" 
+                                 min="0" 
+                                 max="59" />
+                </div>
+            </div>
+        </div>
+
+        <!-- Required Skills Section -->
+        <div class="form-section">
+            <div class="section-header">
+                <i class="bi bi-tools"></i>
+                <h3>Required Skills</h3>
+            </div>
+
+            <div class="skills-input-group">
+                <div class="form-group skill-input">
+                    <label for="skillInput">Add Skill</label>
+                    <input type="text" id="skillInput" @bind="skillInput" 
+                           @bind:event="oninput"
+                           @onkeydown="HandleSkillKeyDown"
+                           class="form-control" 
+                           placeholder="Type skill and press Enter..." />
+                </div>
+                <button type="button" @onclick="AddSkill" class="btn-add-skill">
+                    <i class="bi bi-plus-lg"></i> Add
+                </button>
+            </div>
+
+            @if (model.RequiredSkills.Any())
+            {
+                <div class="skills-list">
+                    @foreach (var skill in model.RequiredSkills)
+                    {
+                        <div class="skill-tag">
+                            <span>@skill</span>
+                            <button type="button" @onclick="() => RemoveSkill(skill)" class="remove-skill">
+                                <i class="bi bi-x"></i>
+                            </button>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+            @if (isSubmitting)
+            {
+                <button type="button" class="btn-primary" disabled>
+                    <span class="spinner"></span>
+                    Creating Job...
+                </button>
+            }
+            else
+            {
+                <button type="submit" class="btn-primary">
+                    <i class="bi bi-check-circle"></i>
+                    Create Job
+                </button>
+            }
+
+            <button type="button" @onclick="Cancel" class="btn-secondary">
+                <i class="bi bi-x-circle"></i>
+                Cancel
+            </button>
+        </div>
+
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <div class="error-message">
+                <i class="bi bi-exclamation-triangle"></i>
+                @errorMessage
+            </div>
+        }
+    </EditForm>
+</div>
+
+<style>
+    .create-job-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    .form-header {
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+
+    .form-header h2 {
+        color: #2c3e50;
+        font-size: 2rem;
+        font-weight: 700;
+        margin: 0 0 0.5rem 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+    }
+
+    .form-header h2 i {
+        color: #667eea;
+        font-size: 2rem;
+    }
+
+    .subtitle {
+        color: #6c757d;
+        font-size: 1rem;
+        margin: 0;
+    }
+
+    .job-form {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        padding: 2rem;
+    }
+
+    .form-section {
+        margin-bottom: 2.5rem;
+        padding-bottom: 2rem;
+        border-bottom: 2px solid #f0f0f0;
+    }
+
+    .form-section:last-of-type {
+        border-bottom: none;
+        margin-bottom: 2rem;
+    }
+
+    .section-header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .section-header i {
+        color: #667eea;
+        font-size: 1.5rem;
+    }
+
+    .section-header h3 {
+        color: #2c3e50;
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .form-row:last-child {
+        margin-bottom: 0;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .form-group.full-width {
+        grid-column: 1 / -1;
+    }
+
+    .form-group label {
+        color: #2c3e50;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        font-size: 0.875rem;
+    }
+
+    .form-control {
+        padding: 0.875rem;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: all 0.2s;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .form-control::placeholder {
+        color: #adb5bd;
+    }
+
+    textarea.form-control {
+        resize: vertical;
+        min-height: 80px;
+    }
+
+    /* Skills Section */
+    .skills-input-group {
+        display: flex;
+        gap: 1rem;
+        align-items: flex-end;
+        margin-bottom: 1.5rem;
+    }
+
+    .skill-input {
+        flex: 1;
+        margin-bottom: 0;
+    }
+
+    .btn-add-skill {
+        padding: 0.75rem 1.5rem;
+        background: #667eea;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        white-space: nowrap;
+        height: fit-content;
+        align-self: flex-end;
+        margin-bottom: 0;
+    }
+
+    .btn-add-skill:hover {
+        background: #5568d3;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn-add-skill:active {
+        transform: translateY(0);
+    }
+
+    .skills-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+
+    .skill-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 20px;
+        font-size: 0.875rem;
+        font-weight: 600;
+    }
+
+    .remove-skill {
+        background: rgba(255, 255, 255, 0.3);
+        border: none;
+        color: white;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s;
+        padding: 0;
+    }
+
+    .remove-skill:hover {
+        background: rgba(255, 255, 255, 0.5);
+        transform: scale(1.1);
+    }
+
+    .remove-skill i {
+        font-size: 0.875rem;
+        font-weight: bold;
+    }
+
+    /* Form Actions */
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+        padding-top: 1.5rem;
+        border-top: 2px solid #f0f0f0;
+    }
+
+    .btn-primary, .btn-secondary {
+        padding: 0.875rem 2rem;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-primary:active:not(:disabled) {
+        transform: translateY(0);
+    }
+
+    .btn-primary:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    .btn-secondary {
+        background: #6c757d;
+        color: white;
+    }
+
+    .btn-secondary:hover {
+        background: #5a6268;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+    }
+
+    .btn-secondary:active {
+        transform: translateY(0);
+    }
+
+    .spinner {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-top-color: white;
+        border-radius: 50%;
+        animation: spin 0.6s linear infinite;
+    }
+
+    @@keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    .error-message {
+        margin-top: 1.5rem;
+        padding: 1rem;
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .error-message i {
+        font-size: 1.25rem;
+    }
+
+    .validation-message {
+        color: #dc3545;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+    }
+
+    @@media (max-width: 768px) {
+        .create-job-container {
+            padding: 1rem;
+        }
+
+        .job-form {
+            padding: 1.5rem;
+        }
+
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+
+        .form-actions {
+            flex-direction: column;
+        }
+
+        .btn-primary, .btn-secondary {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .skills-input-group {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .btn-add-skill {
+            justify-content: center;
+        }
+    }
+</style>
+
+@code {
+    // Mutable view model for form binding
+    private class JobCreateViewModel
+    {
+        public string CustomerId { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public string AddressLine1 { get; set; } = string.Empty;
+        public string? AddressLine2 { get; set; }
+        public string City { get; set; } = string.Empty;
+        public string State { get; set; } = string.Empty;
+        public int ZipCode { get; set; }
+        public string JobTypeName { get; set; } = string.Empty;
+        public string JobTypeCategory { get; set; } = string.Empty;
+        public List<string> RequiredSkills { get; set; } = new();
+    }
+
+    private JobCreateViewModel model = new();
+    private int durationHours = 0;
+    private int durationMinutes = 0;
+    private string skillInput = string.Empty;
+    private bool isSubmitting = false;
+    private string errorMessage = string.Empty;
+
+    private async Task HandleSubmit()
+    {
+        try
+        {
+            isSubmitting = true;
+            errorMessage = string.Empty;
+
+            // Parse Customer ID
+            if (!Guid.TryParse(model.CustomerId, out var customerId))
+            {
+                errorMessage = "Please enter a valid Customer ID (GUID format).";
+                return;
+            }
+
+            // Create the request object
+            var request = new CreateJobRequest
+            {
+                CustomerId = customerId,
+                Description = model.Description,
+                AddressLine1 = model.AddressLine1,
+                AddressLine2 = model.AddressLine2,
+                City = model.City,
+                State = model.State,
+                ZipCode = model.ZipCode,
+                JobTypeName = model.JobTypeName,
+                JobTypeCategory = model.JobTypeCategory,
+                JobTypeEstimatedDuration = new TimeSpan(durationHours, durationMinutes, 0),
+                RequiredSkills = model.RequiredSkills
+            };
+
+            var result = await JobsService.CreateJobAsync(request);
+
+            if (result != null)
+            {
+                // Navigate to jobs list
+                Navigation.NavigateTo("/jobs");
+            }
+            else
+            {
+                errorMessage = "Failed to create job. Please try again.";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error: {ex.Message}";
+        }
+        finally
+        {
+            isSubmitting = false;
+        }
+    }
+
+    private void AddSkill()
+    {
+        if (!string.IsNullOrWhiteSpace(skillInput) && !model.RequiredSkills.Contains(skillInput.Trim()))
+        {
+            model.RequiredSkills.Add(skillInput.Trim());
+            skillInput = string.Empty;
+        }
+    }
+
+    private void RemoveSkill(string skill)
+    {
+        model.RequiredSkills.Remove(skill);
+    }
+
+    private void HandleSkillKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            AddSkill();
+        }
+    }
+
+    private void Cancel()
+    {
+        Navigation.NavigateTo("/jobs");
+    }
+}
+
+

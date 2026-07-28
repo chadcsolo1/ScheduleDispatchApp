@@ -1,14 +1,22 @@
 ﻿@page "/jobs-test"
+@page "/jobs"
+@rendermode InteractiveServer
 @using ScheduleDispatch.UI.Services.Jobs
 @using ScheduleDispatch.UI.Services.Jobs.Response
 @inject JobsService JobsService
+@inject NavigationManager Navigation
 
 <div class="jobs-test-page">
     <div class="page-header">
         <h3>Jobs Dashboard</h3>
-        <button class="btn btn-primary" @onclick="LoadJobs">
-            <i class="bi bi-arrow-clockwise"></i> Refresh Jobs
-        </button>
+        <div class="header-actions">
+            <button class="btn btn-success" @onclick="NavigateToCreateJob">
+                <i class="bi bi-plus-circle"></i> Create Job
+            </button>
+            <button class="btn btn-primary" @onclick="LoadJobs">
+                <i class="bi bi-arrow-clockwise"></i> Refresh Jobs
+            </button>
+        </div>
     </div>
 
     @if (jobs is null)
@@ -32,7 +40,9 @@
         <div class="jobs-grid">
             @foreach (var job in jobs)
             {
-                <_JobsDispalyCardComponent Job="job"></_JobsDispalyCardComponent>
+                <_JobsDispalyCardComponent Job="job" 
+                                           OnEdit="HandleEditJob"
+                                           OnDelete="HandleDeleteJob"></_JobsDispalyCardComponent>
             }
         </div>
     }
@@ -61,12 +71,42 @@
         color: #212529;
     }
 
+    .header-actions {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+    }
+
     .page-header button {
         display: flex;
         align-items: center;
         gap: 0.5rem;
         padding: 0.75rem 1.5rem;
         font-weight: 500;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .btn-success {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;
+    }
+
+    .btn-success:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
     }
 
     .jobs-grid {
@@ -139,6 +179,11 @@
             align-items: flex-start;
         }
 
+        .header-actions {
+            width: 100%;
+            flex-direction: column;
+        }
+
         .page-header button {
             width: 100%;
             justify-content: center;
@@ -158,6 +203,8 @@
 
 @code {
     private IEnumerable<JobResponse>? jobs;
+    private bool showDeleteConfirm = false;
+    private Guid jobToDelete;
 
     protected override async Task OnInitializedAsync()
     {
@@ -168,4 +215,41 @@
     {
         jobs = await JobsService.GetJobsAsync();
     }
+
+    private void NavigateToCreateJob()
+    {
+        Navigation.NavigateTo("/jobs/create");
+    }
+
+    private void HandleEditJob(Guid jobId)
+    {
+        Console.WriteLine($"HandleEditJob called with ID: {jobId}");
+        var url = $"/jobs/edit/{jobId}";
+        Console.WriteLine($"Navigating to: {url}");
+        Navigation.NavigateTo(url);
+    }
+
+    private async Task HandleDeleteJob(Guid jobId)
+    {
+        if (await ConfirmDelete())
+        {
+            try
+            {
+                await JobsService.DeleteJobAsync(jobId);
+                await LoadJobs(); // Refresh the list
+            }
+            catch (Exception ex)
+            {
+                // Handle error (could add a toast notification here)
+                Console.WriteLine($"Error deleting job: {ex.Message}");
+            }
+        }
+    }
+
+    private async Task<bool> ConfirmDelete()
+    {
+        // For now, using browser confirm - could be replaced with a custom modal
+        return await Task.FromResult(true); // In production, show a confirmation modal
+    }
+}
 }
