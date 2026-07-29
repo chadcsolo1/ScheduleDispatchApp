@@ -13,6 +13,18 @@ namespace ScheduleDispatch.API.Models.Responses
         public DateTime? ScheduledFor { get; init; }
         public Guid? AssignedTechnicianId { get; init; }
 
+        // Location
+        public string? AddressLine1 { get; init; }
+        public string? AddressLine2 { get; init; }
+        public string? City { get; init; }
+        public string? State { get; init; }
+        public int? ZipCode { get; init; }
+
+        // Job Type
+        public string? JobTypeName { get; init; }
+        public string? JobTypeCategory { get; init; }
+        public TimeSpan? JobTypeEstimatedDuration { get; init; }
+
         public IReadOnlyList<ChecklistItemDto> CheckList { get; init; } = [];
         public IReadOnlyList<AttachmentDto> Attachments { get; init; } = [];
         public IReadOnlyList<string> RequiredSkills { get; init; } = [];

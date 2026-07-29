@@ -33,10 +33,10 @@
                 Edit Job
             </h2>
             <p class="subtitle">Update the job details below</p>
-            <div class="job-id-badge">Job #@JobId.ToString().Substring(0, 8)</div>
+            <div class="job-id-badge">Job #@JobId.ToString()</div>
         </div>
 
-        <EditForm Model="@model" OnValidSubmit="HandleSubmit" class="job-form">
+        <EditForm Model="@model" OnValidSubmit="HandleSubmit" FormName="EditJobForm" class="job-form">
 
             <!-- Job Details Section -->
             <div class="form-section">
@@ -741,21 +741,24 @@
             if (job != null)
             {
                 // Populate the view model with existing job data
-                // Note: We're using placeholder data for Location and JobType until API is updated
                 model.Description = job.Description ?? string.Empty;
                 model.RequiredSkills = job.RequiredSkills?.ToList() ?? new List<string>();
 
-                // TODO: These need to be added to JobResponse
-                // model.AddressLine1 = job.Location?.AddressLine1 ?? string.Empty;
-                // model.AddressLine2 = job.Location?.AddressLine2;
-                // model.City = job.Location?.City ?? string.Empty;
-                // model.State = job.Location?.State ?? string.Empty;
-                // model.ZipCode = job.Location?.ZipCode ?? 0;
-                // model.JobTypeName = job.JobType?.JobTypeName ?? string.Empty;
-                // model.JobTypeCategory = job.JobType?.JobTypeCategory ?? string.Empty;
-                // var duration = job.JobType?.JobTypeEstimatedDuration ?? TimeSpan.Zero;
-                // durationHours = (int)duration.TotalHours;
-                // durationMinutes = duration.Minutes;
+                // Populate Location fields
+                model.AddressLine1 = job.AddressLine1 ?? string.Empty;
+                model.AddressLine2 = job.AddressLine2;
+                model.City = job.City ?? string.Empty;
+                model.State = job.State ?? string.Empty;
+                model.ZipCode = job.ZipCode ?? 0;
+
+                // Populate Job Type fields
+                model.JobTypeName = job.JobTypeName ?? string.Empty;
+                model.JobTypeCategory = job.JobTypeCategory ?? string.Empty;
+
+                // Populate duration fields
+                var duration = job.JobTypeEstimatedDuration ?? TimeSpan.Zero;
+                durationHours = (int)duration.TotalHours;
+                durationMinutes = duration.Minutes;
             }
         }
         catch (Exception ex)

@@ -209,11 +209,13 @@
     protected override async Task OnInitializedAsync()
     {
         jobs = await JobsService.GetJobsAsync();
+        jobs.OrderBy(job => job.CreatedAt).ToList();
     }
 
     private async Task LoadJobs()
     {
         jobs = await JobsService.GetJobsAsync();
+        jobs.OrderBy(job => job.CreatedAt).ToList();
     }
 
     private void NavigateToCreateJob()

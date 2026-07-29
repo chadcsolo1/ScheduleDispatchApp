@@ -1,4 +1,5 @@
 ﻿@page "/jobs/create"
+@rendermode InteractiveServer
 @using ScheduleDispatch.UI.Services.Jobs
 @using ScheduleDispatch.UI.Services.Jobs.Request
 @inject JobsService JobsService
@@ -13,7 +14,7 @@
         <p class="subtitle">Fill in the details below to create a new job</p>
     </div>
 
-    <EditForm Model="@model" OnValidSubmit="HandleSubmit" class="job-form">
+    <EditForm Model="@model" OnValidSubmit="HandleSubmit" FormName="CreateJobForm" class="job-form">
 
         <!-- Job Details Section -->
         <div class="form-section">
@@ -566,6 +567,12 @@
     private string skillInput = string.Empty;
     private bool isSubmitting = false;
     private string errorMessage = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        // Generate a random GUID for Customer ID
+        model.CustomerId = Guid.NewGuid().ToString();
+    }
 
     private async Task HandleSubmit()
     {

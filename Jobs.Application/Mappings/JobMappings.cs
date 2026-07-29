@@ -20,6 +20,18 @@ namespace Jobs.Application.Mappings
                 ScheduledFor = job.ScheduledFor,
                 AssignedTechnicianId = job.AssignedTechnicianId,
 
+                // Location
+                AddressLine1 = job.Location?.AddressLine1,
+                AddressLine2 = job.Location?.AddressLine2,
+                City = job.Location?.City,
+                State = job.Location?.State,
+                ZipCode = job.Location?.ZipCode,
+
+                // Job Type
+                JobTypeName = job.JobType?.JobTypeName,
+                JobTypeCategory = job.JobType?.JobTypeCategory,
+                JobTypeEstimatedDuration = job.JobType?.JobTypeEstimatedDuration,
+
                 Checklist = job.Checklist
                     .Select(ToDto)
                     .ToList(),
