@@ -7,6 +7,11 @@
     <Project Path="Jobs.Domain/Jobs.Domain.csproj" />
     <Project Path="Jobs.Infrastructure/Jobs.Infrastructure.csproj" />
   </Folder>
+  <Folder Name="/Organization/">
+    <Project Path="Organization.Application/Organization.Application.csproj" Id="dfc78d16-2a68-4177-8cd8-68b030377ed7" />
+    <Project Path="Organization.Domain/Organization.Domain.csproj" Id="64b2ed9a-3a37-42d9-8ab7-8529ae421ddf" />
+    <Project Path="Organization.Infrastructure/Organization.Infrastructure.csproj" Id="237eac7a-38c7-4ea3-87ae-c24c7d3bdd38" />
+  </Folder>
   <Folder Name="/Shared/">
     <Project Path="SharedKernel/SharedKernel.csproj" />
   </Folder>
