@@ -61,25 +61,25 @@
         </div>
 
         <!-- Location Section -->
-        @* @if (Job.Location != null)
+        @if (Job.AddressLine1 != null)
         {
             <div class="Job-section">
                 <h4 class="section-title">
                     <i class="bi bi-geo-alt"></i> Location
                 </h4>
                 <div class="location-details">
-                    <p>@Job.Location.AddressLine1</p>
-                    @if (!string.IsNullOrWhiteSpace(Job.Location.AddressLine2))
+                    <p>@Job.AddressLine1</p>
+                    @if (!string.IsNullOrWhiteSpace(Job.AddressLine2))
                     {
-                        <p>@Job.Location.AddressLine2</p>
+                        <p>@Job.AddressLine2</p>
                     }
-                    <p>@Job.Location.City, @Job.Location.State @Job.Location.ZipCode</p>
+                    <p>@Job.City, @Job.State @Job.ZipCode</p>
                 </div>
             </div>
-        } *@
+        }
 
         <!-- Job Type Section -->
-        @* @if (Job.JobType != null)
+        @if (Job.JobTypeName != null)
         {
             <div class="Job-section">
                 <h4 class="section-title">
@@ -88,19 +88,19 @@
                 <div class="Jobtype-details">
                     <div class="info-row">
                         <span class="info-label">Type:</span>
-                        <span class="info-value-inline">@Job.JobType.JobTypeName</span>
+                        <span class="info-value-inline">@Job.JobTypeName</span>
                     </div>
                     <div class="info-row">
                         <span class="info-label">Category:</span>
-                        <span class="info-value-inline">@Job.JobType.JobTypeCategory</span>
+                        <span class="info-value-inline">@Job.JobTypeCategory</span>
                     </div>
                     <div class="info-row">
                         <span class="info-label">Est. Duration:</span>
-                        <span class="info-value-inline">@FormatDuration(Job.JobType.JobTypeEstimatedDuration)</span>
+                        <span class="info-value-inline">@Job.JobTypeEstimatedDuration</span>
                     </div>
                 </div>
             </div>
-        } *@
+        }
 
         <!-- Required Skills Section -->
         @if (Job.RequiredSkills != null && Job.RequiredSkills.Any())

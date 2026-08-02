@@ -10,6 +10,7 @@
     <div class="page-header">
         <h3>Jobs Dashboard</h3>
         <div class="header-actions">
+            <input class="search-jobs" type="text" placeholder="Search jobs..." @oninput="OnSearchChanged" />
             <button class="btn btn-success" @onclick="NavigateToCreateJob">
                 <i class="bi bi-plus-circle"></i> Create Job
             </button>
@@ -87,6 +88,14 @@
         border-radius: 8px;
         cursor: pointer;
         transition: all 0.2s;
+    }
+
+    .search-jobs {
+        padding: 0.5rem 1rem;
+        border: 1px solid #ced4da;
+        border-radius: 8px;
+        font-size: 1rem;
+        width: 250px;
     }
 
     .btn-success {
@@ -253,5 +262,17 @@
         // For now, using browser confirm - could be replaced with a custom modal
         return await Task.FromResult(true); // In production, show a confirmation modal
     }
-}
+
+    private async Task OnSearchChanged(ChangeEventArgs e)
+    {
+        var searchTerm = e.Value?.ToString() ?? string.Empty;
+        if (string.IsNullOrWhiteSpace(searchTerm))
+        {
+            jobs = await JobsService.GetJobsAsync();
+        } else
+        {
+            jobs = (await JobsService.GetJobsAsync())
+                .Where(job => job.Description.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
+        }
+    }
 }
