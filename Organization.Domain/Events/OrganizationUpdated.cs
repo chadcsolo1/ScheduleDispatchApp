@@ -1,8 +1,9 @@
-﻿using System;
+﻿using SharedKernel.Domain.Events;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace SharedKernel.Domain.Events
+namespace Organization.Domain.Events
 {
     public class OrganizationUpdated : DomainEvent
     {

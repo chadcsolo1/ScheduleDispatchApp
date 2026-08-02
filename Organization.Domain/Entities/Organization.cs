@@ -1,10 +1,13 @@
-﻿using System;
+﻿using Organization.Domain.Events;
+using SharedKernel.Domain.Events;
+using SharedKernel.Domain.Models;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Organization.Domain.Entities
 {
-    public class Organization
+    public class Organization : AggregateRoot
     {
         public Guid Id { get; private set; }
         public string Name { get; private set; }
@@ -19,10 +22,26 @@ namespace Organization.Domain.Entities
             Name = name;
             IsActive = true;
             CreatedAt = DateTime.UtcNow;
+
+            AddDomainEvent(new OrganizationCreated(Id));
         }
 
-        public void UpdateName(string name) => Name = name;
-        public void Activate() => IsActive = true;
-        public void Deactivate() => IsActive = false;
+        public void UpdateName(string name)
+        {
+            Name = name;
+            AddDomainEvent(new OrganizationUpdated(Id));
+        }
+
+        public void Activate()
+        {
+            IsActive = true;
+            AddDomainEvent(new OrganizationActivated(Id));
+        }
+
+        public void Deactivate()
+        {
+            IsActive = false;
+            AddDomainEvent(new OrganizationDeactivated(Id));
+        }
     }
 }
