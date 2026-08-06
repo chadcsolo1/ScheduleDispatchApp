@@ -4,7 +4,13 @@ using Jobs.Infrastructure.Extensions;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllers();
+
+//Building in content negotiation to our API controllers. This allows the API to return responses in different formats (e.g., JSON, XML) based on the client's request.
+builder.Services.AddControllers(options =>
+{
+    options.ReturnHttpNotAcceptable = true; // Return 406 Not Acceptable if the requested format is not supported
+})
+.AddXmlSerializerFormatters();
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();

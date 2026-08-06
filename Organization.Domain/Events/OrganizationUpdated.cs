@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Organization.Domain.Events
+namespace Organizations.Domain.Events
 {
     public class OrganizationUpdated : DomainEvent
     {

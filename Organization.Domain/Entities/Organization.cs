@@ -1,11 +1,11 @@
-﻿using Organization.Domain.Events;
+﻿using Organizations.Domain.Events;
 using SharedKernel.Domain.Events;
 using SharedKernel.Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Organization.Domain.Entities
+namespace Organizations.Domain.Entities
 {
     public class Organization : AggregateRoot
     {

@@ -3,7 +3,8 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net10.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
+	<RootNamespace>Organizations.Domain</RootNamespace>
+    <ImplicitUsings>enable</>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
