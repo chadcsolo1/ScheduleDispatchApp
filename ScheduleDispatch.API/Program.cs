@@ -10,6 +10,7 @@ builder.Services.AddControllers(options =>
 {
     options.ReturnHttpNotAcceptable = true; // Return 406 Not Acceptable if the requested format is not supported
 })
+.AddNewtonsoftJson()
 .AddXmlSerializerFormatters();
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
