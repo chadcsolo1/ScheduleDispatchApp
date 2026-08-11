@@ -1,5 +1,6 @@
 using Jobs.Application.Extensions;
 using Jobs.Infrastructure.Extensions;
+using ScheduleDispatch.API.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,10 @@ builder.Services.AddControllers(options =>
 })
 .AddNewtonsoftJson()
 .AddXmlSerializerFormatters();
+
+//Custom Exception Handling
+builder.Services.AddExceptionHandler<ValidationExceptionHandler>();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
@@ -41,6 +46,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseExceptionHandler();
 
 app.UseAuthorization();
 
