@@ -8,7 +8,7 @@ namespace Jobs.Domain.Interfaces
 {
     public interface IJobReadRepository
     {
-        Task<IReadOnlyList<Job>> GetAllAsync(CancellationToken cancellationToken = default);
+        Task<IReadOnlyList<Job>> GetAllAsync(string? search, CancellationToken cancellationToken = default);
         Task<Job?> GetByIdAsync(Guid jobId, CancellationToken cancellationToken = default);
 
         Task<IReadOnlyList<Job>> GetJobsForCustomerAsync(

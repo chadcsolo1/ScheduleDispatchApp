@@ -5,6 +5,7 @@ using Jobs.Application.Commands.UpdateJob;
 using Jobs.Application.DTOs;
 using Jobs.Application.Queries.GetAllJobs;
 using Jobs.Application.Queries.GetJobById;
+using Jobs.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -106,10 +107,10 @@ namespace ScheduleDispatch.API.Controllers
         // GET ALL JOBS
         // ------------------------------------------------------------
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<JobResponse>>> GetJobs(
+        public async Task<ActionResult<IEnumerable<JobResponse>>> GetJobs([FromQuery (Name = "q")] string? searchTerm,
             CancellationToken cancellationToken)
         {
-            var query = new GetAllJobsQuery();
+            var query = new GetAllJobsQuery(searchTerm);
 
             var dtos = await _queryDispatcher
                 .DispatchAsync<GetAllJobsQuery, IEnumerable<JobDto>>(query, cancellationToken);

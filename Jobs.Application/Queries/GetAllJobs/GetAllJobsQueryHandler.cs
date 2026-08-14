@@ -19,7 +19,7 @@ namespace Jobs.Application.Queries.GetAllJobs
 
         public async Task<IEnumerable<JobDto>> Handle(GetAllJobsQuery query, CancellationToken cancellationToken)
         {
-            var jobs = await _jobReadRepository.GetAllAsync(cancellationToken);
+            var jobs = await _jobReadRepository.GetAllAsync(query.SearchTerm, cancellationToken);
             return jobs.Select(JobMappings.ToDto);
         }
     }

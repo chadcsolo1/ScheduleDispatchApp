@@ -17,11 +17,28 @@ namespace Jobs.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<IReadOnlyList<Job>> GetAllAsync(CancellationToken cancellationToken = default)
+        public async Task<IReadOnlyList<Job>> GetAllAsync(string? search, CancellationToken cancellationToken = default)
         {
-            return await _context.Jobs.Include(j => j.Checklist)
-                                      .Include(j => j.Attachments)
-                                      .ToListAsync(cancellationToken);
+            search ??= search?.Trim().ToLower();
+
+            IQueryable<Job> query = _context.Jobs;
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                query = query.Where(j => j.Description.ToLower().Contains(search) ||
+                                         j.Location.AddressLine1.ToLower().Contains(search) ||
+                                         j.Location.AddressLine2.ToLower().Contains(search) ||
+                                         j.Location.City.ToLower().Contains(search) ||
+                                         j.Location.State.ToLower().Contains(search) ||
+                                         j.JobType.JobTypeName.ToLower().Contains(search) ||
+                                         j.JobType.JobTypeCategory.ToLower().Contains(search) ||
+                                         j.RequiredSkills.Any(rs => rs.Name.ToLower().Contains(search)) ||
+                                         j.Status.ToString().ToLower().Contains(search));
+            }
+
+            return await query.Include(j => j.Checklist)
+                              .Include(j => j.Attachments)
+                              .ToListAsync(cancellationToken);
         }
 
         public async Task<Job?> GetByIdAsync(Guid jobId, CancellationToken cancellationToken = default)

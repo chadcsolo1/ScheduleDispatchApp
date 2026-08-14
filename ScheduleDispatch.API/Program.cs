@@ -9,14 +9,14 @@ var builder = WebApplication.CreateBuilder(args);
 //Building in content negotiation to our API controllers. This allows the API to return responses in different formats (e.g., JSON, XML) based on the client's request.
 builder.Services.AddControllers(options =>
 {
-    options.ReturnHttpNotAcceptable = true; // Return 406 Not Acceptable if the requested format is not supported
-})
-.AddNewtonsoftJson()
-.AddXmlSerializerFormatters();
+    //options.ReturnHttpNotAcceptable = false; // Return 406 Not Acceptable if the requested format is not supported
+});
+//.AddNewtonsoftJson()
+//.AddXmlSerializerFormatters();
 
 //Custom Exception Handling
-builder.Services.AddExceptionHandler<ValidationExceptionHandler>();
-builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+//builder.Services.AddExceptionHandler<ValidationExceptionHandler>();
+//builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
@@ -47,7 +47,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseExceptionHandler();
+//app.UseExceptionHandler();
 
 app.UseAuthorization();
 
