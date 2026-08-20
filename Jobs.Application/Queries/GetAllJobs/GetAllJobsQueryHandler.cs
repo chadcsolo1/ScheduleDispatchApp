@@ -17,10 +17,10 @@ namespace Jobs.Application.Queries.GetAllJobs
             _jobReadRepository = jobReadRepository;
         }
 
-        public async Task<IEnumerable<JobDto>> Handle(GetAllJobsQuery query, CancellationToken cancellationToken)
+        public async Task<IEnumerable<JobDto>> Handle(GetAllJobsQuery? query, CancellationToken cancellationToken)
         {
-            var jobs = await _jobReadRepository.GetAllAsync(query.SearchTerm, cancellationToken);
-            return jobs.Select(JobMappings.ToDto);
+            var jobs = await _jobReadRepository.GetAllAsync(query.SearchTerm, query.JobType, query.Location, cancellationToken);
+             return jobs.Select(JobMappings.ToDto);
         }
     }
 }
