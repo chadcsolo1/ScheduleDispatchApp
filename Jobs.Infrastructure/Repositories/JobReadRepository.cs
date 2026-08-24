@@ -3,6 +3,7 @@ using Jobs.Domain.Enums;
 using Jobs.Domain.Interfaces;
 using Jobs.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -22,10 +23,15 @@ namespace Jobs.Infrastructure.Repositories
         {
             search ??= search?.Trim().ToLower();
 
-
+            Console.WriteLine($"Search: {search}, JobType: {jobType}, Location: {location}");
             IQueryable<Job> query = _context.Jobs;
 
-            if (!string.IsNullOrEmpty(search) || jobType != null || location != null)
+            foreach (var job in query)
+            {
+                Console.WriteLine($"Job: {job.Description}, Location: {job.Location}, JobType: {job.JobType}");
+            }
+
+            if (!string.IsNullOrEmpty(search))
             {
                 query = query.Where(j => j.Description.ToLower().Contains(search) ||
                                          j.Location.AddressLine1.ToLower().Contains(search) ||
@@ -36,24 +42,34 @@ namespace Jobs.Infrastructure.Repositories
                                          j.JobType.JobTypeCategory.ToLower().Contains(search) ||
                                          j.RequiredSkills.Any(rs => rs.Name.ToLower().Contains(search)) ||
                                          j.Status.ToString().ToLower().Contains(search));
-                //.Where(j => location.AddressLine1 == null || j.Location.AddressLine1.Trim().ToLower() == location.AddressLine1.Trim().ToLower())
-                //.Where(j => location.AddressLine2 == null || j.Location.AddressLine2.Trim().ToLower() == location.AddressLine2.Trim().ToLower())
-                //.Where(j => location.City == null || j.Location.City.Trim().ToLower() == location.City.Trim().ToLower())
-                //.Where(j => location.State == null || j.Location.State.Trim().ToLower() == location.State.Trim().ToLower())
-                //.Where(j => location.ZipCode == null || j.Location.ZipCode == location.ZipCode);
-                //.Where(j => jobType == null || j.JobType == jobType)
-                //.Where(j => location.AddressLine1 == null || j.Location.AddressLine1.Trim().ToLower() == location.AddressLine1.Trim().ToLower() ||
-                //       j => location.AddressLine2 == null || j.Location.AddressLine2.Trim().ToLower() == location.AddressLine2.Trim().ToLower() ||
-                //       location.City == null || j.Location.City.Trim().ToLower() == location.City.Trim().ToLower() ||
-                //       location.State == null || j.Location.State.Trim().ToLower() == location.State.Trim().ToLower() ||
-                //       location.ZipCode == null || j.Location.ZipCode == location.ZipCode);
 
-                query = query.Where(j => location.AddressLine1 == null || j.Location.AddressLine1.Trim().ToLower() == location.AddressLine1.Trim().ToLower() ||
-                                   location.AddressLine2 == null || j.Location.AddressLine2.Trim().ToLower() == location.AddressLine2.Trim().ToLower() ||
-                                   location.City == null || j.Location.City.Trim().ToLower() == location.City.Trim().ToLower() ||
-                                   location.State == null || j.Location.State.Trim().ToLower() == location.State.Trim().ToLower() ||
-                                   location.ZipCode == null || j.Location.ZipCode == location.ZipCode);
+            }
 
+            if (location != null)
+            {
+                    if (!string.IsNullOrWhiteSpace(location.AddressLine1))
+                    query = query.Where(j => j.Location.AddressLine1.Trim().ToLower() == location.AddressLine1.Trim().ToLower());
+    
+                    if (!string.IsNullOrWhiteSpace(location.AddressLine2))
+                        query = query.Where(j => j.Location.AddressLine2.Trim().ToLower() == location.AddressLine2.Trim().ToLower());
+    
+                    if (!string.IsNullOrWhiteSpace(location.City))
+                        query = query.Where(j => j.Location.City.Trim().ToLower() == location.City.Trim().ToLower());
+    
+                    if (!string.IsNullOrWhiteSpace(location.State))
+                        query = query.Where(j => j.Location.State.Trim().ToLower().Equals(location.State.Trim().ToLower()));
+            }
+
+            if (jobType != null)
+            {
+                if (!string.IsNullOrWhiteSpace(jobType.JobTypeName))
+                    query = query.Where(j => j.JobType.JobTypeName.Trim().ToLower() == jobType.JobTypeName.Trim().ToLower());
+
+                if (!string.IsNullOrWhiteSpace(jobType.JobTypeCategory))
+                    query = query.Where(j => j.JobType.JobTypeCategory.Trim().ToLower() == jobType.JobTypeCategory.Trim().ToLower());
+
+                //if (!string.IsNullOrWhiteSpace(jobType.JobTypeEstimatedDuration.ToString()))
+                //    query = query.Where(j => j.JobType.JobTypeEstimatedDuration == jobType.JobTypeEstimatedDuration);
             }
 
             return await query.Include(j => j.Checklist)
