@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Jobs.Domain.Enums;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -8,6 +9,7 @@ namespace Jobs.Application.Commands.UpdateJob
     (
         Guid JobId,
         string Description,
+        JobStatus Status,
         string AddressLine1,
         string AddressLine2,
         string City,

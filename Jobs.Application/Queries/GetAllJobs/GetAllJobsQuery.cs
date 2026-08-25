@@ -1,4 +1,5 @@
-﻿using Jobs.Domain.ValueObjects;
+﻿using Jobs.Domain.Models;
+using Jobs.Domain.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,6 +10,7 @@ namespace Jobs.Application.Queries.GetAllJobs
     (
         string? SearchTerm = null,
         JobType? JobType = null,
-        Location? Location = null
+        Location? Location = null,
+        Sort? Sort = null
     );
 }

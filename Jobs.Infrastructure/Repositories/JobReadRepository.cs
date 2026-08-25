@@ -1,6 +1,7 @@
 ﻿using Jobs.Domain.Entities;
 using Jobs.Domain.Enums;
 using Jobs.Domain.Interfaces;
+using Jobs.Domain.Models;
 using Jobs.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -19,7 +20,7 @@ namespace Jobs.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<IReadOnlyList<Job>> GetAllAsync(string? search, JobType? jobType = null, Location? location = null, CancellationToken cancellationToken = default)
+        public async Task<IReadOnlyList<Job>> GetAllAsync(string? search, JobType? jobType = null, Location? location = null, Sort? sort = null, CancellationToken cancellationToken = default)
         {
             search ??= search?.Trim().ToLower();
 
@@ -70,6 +71,26 @@ namespace Jobs.Infrastructure.Repositories
 
                 //if (!string.IsNullOrWhiteSpace(jobType.JobTypeEstimatedDuration.ToString()))
                 //    query = query.Where(j => j.JobType.JobTypeEstimatedDuration == jobType.JobTypeEstimatedDuration);
+            }
+
+            if (sort != null)
+            {
+                switch (sort.SortBy?.Trim().ToLower())
+                {
+                    case "createdat":
+                    query = sort.SortDirection?.Trim().ToLower() == "desc" ? query.OrderByDescending(j => j.CreatedAt) : query.OrderBy(j => j.CreatedAt);
+                    break;
+                    case "scheduledfor":
+                    query = sort.SortDirection?.Trim().ToLower() == "desc" ? query.OrderByDescending(j => j.ScheduledFor) : query.OrderBy(j => j.ScheduledFor);
+                    break;
+                    case "status":
+                    query = sort.SortDirection?.Trim().ToLower() == "desc" ? query.OrderByDescending(j => j.Status) : query.OrderBy(j => j.Status);
+                    break;
+                    default:
+                    // Default sorting by CreatedAt if no valid sort field is provided
+                    query = query.OrderBy(j => j.CreatedAt);
+                    break;
+                }
             }
 
             return await query.Include(j => j.Checklist)

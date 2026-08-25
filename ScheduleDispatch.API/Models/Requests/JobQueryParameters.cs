@@ -1,4 +1,5 @@
-﻿using Jobs.Domain.ValueObjects;
+﻿using Jobs.Domain.Models;
+using Jobs.Domain.ValueObjects;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ScheduleDispatch.API.Models.Requests
@@ -9,5 +10,7 @@ namespace ScheduleDispatch.API.Models.Requests
         public string? SearchTerm { get; init; }
         public JobType? JobType { get; init; }
         public Location? Location { get; init; }
+
+        public Sort? Sort { get; init; }
     }
 }

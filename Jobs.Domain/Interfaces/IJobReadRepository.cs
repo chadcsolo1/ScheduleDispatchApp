@@ -1,5 +1,6 @@
 ﻿using Jobs.Domain.Entities;
 using Jobs.Domain.Enums;
+using Jobs.Domain.Models;
 using Jobs.Domain.ValueObjects;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ namespace Jobs.Domain.Interfaces
 {
     public interface IJobReadRepository
     {
-        Task<IReadOnlyList<Job>> GetAllAsync(string? search, JobType? jobType = null, Location? location = null, CancellationToken cancellationToken = default);
+        Task<IReadOnlyList<Job>> GetAllAsync(string? search, JobType? jobType = null, Location? location = null, Sort? sort = null, CancellationToken cancellationToken = default);
         
         Task<Job?> GetByIdAsync(Guid jobId, CancellationToken cancellationToken = default);
 

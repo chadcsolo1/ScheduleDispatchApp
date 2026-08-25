@@ -1,8 +1,11 @@
-﻿namespace ScheduleDispatch.API.Models.Requests
+﻿using Jobs.Domain.Enums;
+
+namespace ScheduleDispatch.API.Models.Requests
 {
     public sealed class UpdateJobRequest
     {
         public string Description { get; init; } = string.Empty;
+        public JobStatus Status { get; init; }
 
         // Location
         public string AddressLine1 { get; init; } = string.Empty;
