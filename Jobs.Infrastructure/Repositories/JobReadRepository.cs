@@ -1,13 +1,8 @@
 ﻿using Jobs.Domain.Entities;
 using Jobs.Domain.Enums;
 using Jobs.Domain.Interfaces;
-using Jobs.Domain.Models;
-using Jobs.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
-using System.Text;
+
 
 namespace Jobs.Infrastructure.Repositories
 {
@@ -20,83 +15,95 @@ namespace Jobs.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<IReadOnlyList<Job>> GetAllAsync(string? search, JobType? jobType = null, Location? location = null, Sort? sort = null, CancellationToken cancellationToken = default)
+        public async Task<IReadOnlyList<Job>> GetAllAsync(IJobQuerySpecification query, CancellationToken cancellationToken = default)
         {
-            search ??= search?.Trim().ToLower();
+            int totalJobsCount = 0;
 
-            Console.WriteLine($"Search: {search}, JobType: {jobType}, Location: {location}");
-            IQueryable<Job> query = _context.Jobs;
+            IQueryable<Job> jobQuery = _context.Jobs;
 
-            foreach (var job in query)
+            foreach (var job in jobQuery)
             {
                 Console.WriteLine($"Job: {job.Description}, Location: {job.Location}, JobType: {job.JobType}");
             }
 
-            if (!string.IsNullOrEmpty(search))
+            if (!string.IsNullOrEmpty(query.SearchTerm))
             {
-                query = query.Where(j => j.Description.ToLower().Contains(search) ||
-                                         j.Location.AddressLine1.ToLower().Contains(search) ||
-                                         j.Location.AddressLine2.ToLower().Contains(search) ||
-                                         j.Location.City.ToLower().Contains(search) ||
-                                         j.Location.State.ToLower().Contains(search) ||
-                                         j.JobType.JobTypeName.ToLower().Contains(search) ||
-                                         j.JobType.JobTypeCategory.ToLower().Contains(search) ||
-                                         j.RequiredSkills.Any(rs => rs.Name.ToLower().Contains(search)) ||
-                                         j.Status.ToString().ToLower().Contains(search));
+                jobQuery = jobQuery.Where(j => j.Description.ToLower().Contains(query.SearchTerm) ||
+                                         j.Location.AddressLine1.ToLower().Contains(query.SearchTerm) ||
+                                         j.Location.AddressLine2.ToLower().Contains(query.SearchTerm) ||
+                                         j.Location.City.ToLower().Contains(query.SearchTerm) ||
+                                         j.Location.State.ToLower().Contains(query.SearchTerm) ||
+                                         j.JobType.JobTypeName.ToLower().Contains(query.SearchTerm) ||
+                                         j.JobType.JobTypeCategory.ToLower().Contains(query.SearchTerm) ||
+                                         j.RequiredSkills.Any(rs => rs.Name.ToLower().Contains(query.SearchTerm)) ||
+                                         j.Status.ToString().ToLower().Contains(query.SearchTerm));
 
             }
 
-            if (location != null)
+            if (query.City != null)
             {
-                    if (!string.IsNullOrWhiteSpace(location.AddressLine1))
-                    query = query.Where(j => j.Location.AddressLine1.Trim().ToLower() == location.AddressLine1.Trim().ToLower());
+                    //if (!string.IsNullOrWhiteSpace(query.Location.AddressLine1))
+                    //queryable = queryable.Where(j => j.Location.AddressLine1.Trim().ToLower() == query.Location.AddressLine1.Trim().ToLower());
     
-                    if (!string.IsNullOrWhiteSpace(location.AddressLine2))
-                        query = query.Where(j => j.Location.AddressLine2.Trim().ToLower() == location.AddressLine2.Trim().ToLower());
+                    //if (!string.IsNullOrWhiteSpace(query.Location.AddressLine2))
+                    //    queryable = queryable.Where(j => j.Location.AddressLine2.Trim().ToLower() == query.Location.AddressLine2.Trim().ToLower());
     
-                    if (!string.IsNullOrWhiteSpace(location.City))
-                        query = query.Where(j => j.Location.City.Trim().ToLower() == location.City.Trim().ToLower());
+                    if (!string.IsNullOrWhiteSpace(query.City))
+                        jobQuery = jobQuery.Where(j => j.Location.City.Trim().ToLower() == query.City.Trim().ToLower());
     
-                    if (!string.IsNullOrWhiteSpace(location.State))
-                        query = query.Where(j => j.Location.State.Trim().ToLower().Equals(location.State.Trim().ToLower()));
+                    
             }
 
-            if (jobType != null)
+            if (query.State != null) 
             {
-                if (!string.IsNullOrWhiteSpace(jobType.JobTypeName))
-                    query = query.Where(j => j.JobType.JobTypeName.Trim().ToLower() == jobType.JobTypeName.Trim().ToLower());
-
-                if (!string.IsNullOrWhiteSpace(jobType.JobTypeCategory))
-                    query = query.Where(j => j.JobType.JobTypeCategory.Trim().ToLower() == jobType.JobTypeCategory.Trim().ToLower());
-
-                //if (!string.IsNullOrWhiteSpace(jobType.JobTypeEstimatedDuration.ToString()))
-                //    query = query.Where(j => j.JobType.JobTypeEstimatedDuration == jobType.JobTypeEstimatedDuration);
+                if (!string.IsNullOrWhiteSpace(query.State))
+                        jobQuery = jobQuery.Where(j => j.Location.State.Trim().ToLower().Equals(query.State.Trim().ToLower()));
             }
 
-            if (sort != null)
+            if (query.JobTypeName != null)
             {
-                switch (sort.SortBy?.Trim().ToLower())
+                if (!string.IsNullOrWhiteSpace(query.JobTypeName))
+                    jobQuery = jobQuery.Where(j => j.JobType.JobTypeName.ToLower().Contains(query.JobTypeName));
+                //if (!string.IsNullOrWhiteSpace(query.JobTypeName))
+                //    jobQuery = jobQuery.Where(j => j.JobType.JobTypeName.Trim().ToLower() == query.JobTypeName.Trim().ToLower());
+
+            }
+
+            if (query.JobTypeCategory != null)
+            {
+                if (!string.IsNullOrWhiteSpace(query.JobTypeCategory))
+                    jobQuery = jobQuery.Where(j => j.JobType.JobTypeCategory.Trim().ToLower() == query.JobTypeCategory.Trim().ToLower());
+
+            }
+
+            totalJobsCount = await jobQuery.CountAsync(cancellationToken);
+
+            if (query.SortBy != null)
+            {
+                switch (query.SortBy?.Trim().ToLower())
                 {
-                    case "createdat":
-                    query = sort.SortDirection?.Trim().ToLower() == "desc" ? query.OrderByDescending(j => j.CreatedAt) : query.OrderBy(j => j.CreatedAt);
+                    case "createdate":
+                    jobQuery = query.SortDirection?.Trim().ToLower() == "desc" ? jobQuery.OrderByDescending(j => j.CreatedAt) : jobQuery.OrderBy(j => j.CreatedAt);
                     break;
                     case "scheduledfor":
-                    query = sort.SortDirection?.Trim().ToLower() == "desc" ? query.OrderByDescending(j => j.ScheduledFor) : query.OrderBy(j => j.ScheduledFor);
+                    jobQuery = query.SortDirection?.Trim().ToLower() == "desc" ? jobQuery.OrderByDescending(j => j.ScheduledFor) : jobQuery.OrderBy(j => j.ScheduledFor);
                     break;
                     case "status":
-                    query = sort.SortDirection?.Trim().ToLower() == "desc" ? query.OrderByDescending(j => j.Status) : query.OrderBy(j => j.Status);
+                    jobQuery = query.SortDirection?.Trim().ToLower() == "desc" ? jobQuery.OrderByDescending(j => j.Status) : jobQuery.OrderBy(j => j.Status);
                     break;
                     default:
                     // Default sorting by CreatedAt if no valid sort field is provided
-                    query = query.OrderBy(j => j.CreatedAt);
+                    jobQuery = jobQuery.OrderBy(j => j.CreatedAt);
                     break;
                 }
             }
 
-            return await query.Include(j => j.Checklist)
-                              .Include(j => j.Attachments)
+            return await jobQuery.Include(j => j.Checklist)
+                                 .Include(j => j.Attachments)
+                              .Skip((query.Page -1) * query.PageSize)
+                              .Take(query.PageSize)
                               .ToListAsync(cancellationToken);
-        }
+        }   
 
         public async Task<Job?> GetByIdAsync(Guid jobId, CancellationToken cancellationToken = default)
         {

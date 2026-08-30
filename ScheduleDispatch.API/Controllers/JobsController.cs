@@ -108,10 +108,32 @@ namespace ScheduleDispatch.API.Controllers
         // GET ALL JOBS
         // ------------------------------------------------------------
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<JobResponse>>> GetJobs([FromQuery] JobQueryParameters queryParams,
-            CancellationToken cancellationToken)
+        public async Task<ActionResult<IEnumerable<JobResponse>>> GetJobs(
+            [FromQuery] string? searchTerm,
+            [FromQuery] string? jobTypeName,
+            [FromQuery] string? jobTypeCategory,
+            [FromQuery] string? city,
+            [FromQuery] string? state,
+            [FromQuery] int? zipCode,
+            [FromQuery] string? sortBy,
+            [FromQuery] string? sortDirection,
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10,
+            CancellationToken cancellationToken = default)
         {
-            var query = new GetAllJobsQuery(queryParams.SearchTerm, queryParams.JobType, queryParams.Location);
+                var query = new GetAllJobsQuery
+                {
+                    SearchTerm = searchTerm,
+                    JobTypeName = jobTypeName,
+                    JobTypeCategory = jobTypeCategory,
+                    City = city,
+                    State = state,
+                    ZipCode = zipCode,
+                    SortBy = sortBy,
+                    SortDirection = sortDirection,
+                    Page = page,
+                    PageSize = pageSize
+                };
 
             var dtos = await _queryDispatcher
                 .DispatchAsync<GetAllJobsQuery, IEnumerable<JobDto>>(query, cancellationToken);
@@ -153,6 +175,7 @@ namespace ScheduleDispatch.API.Controllers
             var command = new UpdateJobCommand(
                 id,
                 request.Description,
+                request.Status,
                 request.AddressLine1,
                 request.AddressLine2 ?? string.Empty,
                 request.City,
@@ -226,6 +249,7 @@ namespace ScheduleDispatch.API.Controllers
             var command = new UpdateJobCommand(
                 id,
                 request.Description,
+                request.Status,
                 request.AddressLine1,
                 request.AddressLine2 ?? string.Empty,
                 request.City,
