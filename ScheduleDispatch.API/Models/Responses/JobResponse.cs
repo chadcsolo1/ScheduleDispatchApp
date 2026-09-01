@@ -1,8 +1,9 @@
 ﻿using Jobs.Application.DTOs;
+using ScheduleDispatch.API.DTOs;
 
 namespace ScheduleDispatch.API.Models.Responses
 {
-    public sealed class JobResponse
+    public sealed class JobResponse : ICollectionResponse<JobResponse>
     {
         public Guid Id { get; init; }
         public Guid CustomerId { get; init; }
@@ -28,5 +29,10 @@ namespace ScheduleDispatch.API.Models.Responses
         public IReadOnlyList<ChecklistItemDto> CheckList { get; init; } = [];
         public IReadOnlyList<AttachmentDto> Attachments { get; init; } = [];
         public IReadOnlyList<string> RequiredSkills { get; init; } = [];
+        public List<JobResponse> Items
+        {
+            get => throw new NotImplementedException();
+            init => throw new NotImplementedException();
+        }
     }
 }

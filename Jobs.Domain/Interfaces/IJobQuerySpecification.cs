@@ -21,9 +21,14 @@ namespace Jobs.Domain.Interfaces
         // Sorting
         string? SortBy { get; }
         string? SortDirection { get; }
+
+        //Data shaping
+        string? Fields { get; }
         
         // Pagination
         int Page { get; }
         int PageSize { get; }
+
+  
     }
 }

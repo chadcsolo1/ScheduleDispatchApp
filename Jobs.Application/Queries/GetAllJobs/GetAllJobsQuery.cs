@@ -21,9 +21,11 @@ namespace Jobs.Application.Queries.GetAllJobs
         public string? SortBy { get; init; } = null;
 
         public string? SortDirection { get; init; } = "asc";
+        public string? Fields { get; init; } = null;
 
         public int Page { get; init; } = 1;
 
         public int PageSize { get; init; } = 10;
+
     }
 }
