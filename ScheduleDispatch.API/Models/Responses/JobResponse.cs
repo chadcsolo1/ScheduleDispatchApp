@@ -1,10 +1,11 @@
 ﻿using Jobs.Application.DTOs;
-using ScheduleDispatch.API.DTOs;
+using Jobs.Domain.Interfaces;
 
 namespace ScheduleDispatch.API.Models.Responses
 {
-    public sealed class JobResponse : ICollectionResponse<JobResponse>
+    public sealed class JobResponse 
     {
+        //: ICollectionResponse<JobResponse>
         public Guid Id { get; init; }
         public Guid CustomerId { get; init; }
         public string Description { get; init; } = string.Empty;
@@ -23,16 +24,15 @@ namespace ScheduleDispatch.API.Models.Responses
 
         // Job Type
         public string? JobTypeName { get; init; }
-        public string? JobTypeCategory { get; init; }
-        public TimeSpan? JobTypeEstimatedDuration { get; init; }
+        public string? JobTypeCategory { get; init; }        public TimeSpan? JobTypeEstimatedDuration { get; init; }
 
         public IReadOnlyList<ChecklistItemDto> CheckList { get; init; } = [];
         public IReadOnlyList<AttachmentDto> Attachments { get; init; } = [];
         public IReadOnlyList<string> RequiredSkills { get; init; } = [];
-        public List<JobResponse> Items
-        {
-            get => throw new NotImplementedException();
-            init => throw new NotImplementedException();
-        }
+        //public List<JobResponse> Items
+        //{
+        //    get => throw new NotImplementedException();
+        //    init => throw new NotImplementedException();
+        //}
     }
 }

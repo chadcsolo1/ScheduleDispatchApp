@@ -46,13 +46,15 @@ namespace Jobs.Application.Commands.UpdateJob
                 command.JobTypeEstimatedDuration
             );
 
-             var requiredSkills = command.RequiredSkills?
+            var jobStatus = command.Status;
+
+            var requiredSkills = command.RequiredSkills?
             .Select(skillName => new Skill(skillName))
             .ToList();
 
 
             // Update the job properties based on the command
-            existingJob.UpdateDetails(command.Description, location, jobType, requiredSkills);
+            existingJob.UpdateDetails(command.Description, location, jobType, jobStatus, requiredSkills);
             await _jobRepository.UpdateAsync(existingJob, cancellationToken);
 
             // Save the changes to the repository

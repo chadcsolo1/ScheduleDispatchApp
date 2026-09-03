@@ -6,6 +6,7 @@ using Jobs.Application.DTOs;
 using Jobs.Application.Queries.GetAllJobs;
 using Jobs.Application.Queries.GetJobById;
 using Jobs.Domain.Entities;
+using Jobs.Domain.Models;
 using Jobs.Domain.ValueObjects;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
@@ -136,9 +137,9 @@ namespace ScheduleDispatch.API.Controllers
                 };
 
             var dtos = await _queryDispatcher
-                .DispatchAsync<GetAllJobsQuery, IEnumerable<JobDto>>(query, cancellationToken);
+                .DispatchAsync<GetAllJobsQuery, PaginationResult<JobDto>>(query, cancellationToken);
 
-            var response = dtos.Select(dto => new JobResponse
+            var response = dtos.Items.Select(dto => new JobResponse
             {
                 Id = dto.Id,
                 CustomerId = dto.CustomerId,

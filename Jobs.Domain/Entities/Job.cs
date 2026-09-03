@@ -43,7 +43,7 @@ namespace Jobs.Domain.Entities
         // ------------------------------------------------------------
         // Update Job Details
         // ------------------------------------------------------------
-        public void UpdateDetails(string description, Location location, JobType jobType, List<Skill> requiredSkills)
+        public void UpdateDetails(string description, Location location, JobType jobType, JobStatus jobStatus, List<Skill> requiredSkills)
         {
             if (Status == JobStatus.Completed || Status == JobStatus.Canceled)
                 throw new InvalidJobOperationException("Cannot update a completed or canceled job.");
@@ -51,6 +51,7 @@ namespace Jobs.Domain.Entities
             Location = location;
             JobType = jobType;
             RequiredSkills = requiredSkills;
+            Status = jobStatus;
             AddDomainEvent(new JobUpdatedEvent(JobId));
         }
 

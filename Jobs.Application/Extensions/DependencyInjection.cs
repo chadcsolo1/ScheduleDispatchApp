@@ -14,6 +14,7 @@ using Jobs.Application.Queries.GetJobById;
 using Jobs.Application.Queries.GetJobsByStatus;
 using Jobs.Application.Queries.GetJobsForCustomer;
 using Jobs.Application.Queries.GetOpenJobs;
+using Jobs.Domain.Models;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -40,7 +41,8 @@ namespace Jobs.Application.Extensions{
 
 
             // Register query handlers
-            services.AddScoped<IQueryHandler<GetAllJobsQuery, IEnumerable<JobDto>>, GetAllJobsQueryHandler>();
+            //services.AddScoped<IQueryHandler<GetAllJobsQuery, IEnumerable<JobDto>>, GetAllJobsQueryHandler>();
+            services.AddScoped<IQueryHandler<GetAllJobsQuery, PaginationResult<JobDto>>, GetAllJobsQueryHandler>();
             services.AddScoped<IQueryHandler<GetJobByIdQuery, JobDto?>, GetJobByIdQueryHandler>();
             services.AddScoped<IQueryHandler<GetJobsByStatusQuery, IReadOnlyList<JobDto>>, GetJobsByStatusQueryHandler>();
             services.AddScoped<IQueryHandler<GetJobsForCustomerQuery, IReadOnlyList<JobDto>>, GetJobsForCustomerQueryHandler>();
