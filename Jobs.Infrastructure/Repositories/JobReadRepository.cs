@@ -1,8 +1,8 @@
 ﻿using Jobs.Domain.Entities;
 using Jobs.Domain.Enums;
 using Jobs.Domain.Interfaces;
+using Jobs.Domain.Models;
 using Microsoft.EntityFrameworkCore;
-
 
 namespace Jobs.Infrastructure.Repositories
 {
@@ -15,11 +15,13 @@ namespace Jobs.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<IReadOnlyList<Job>> GetAllAsync(IJobQuerySpecification query, CancellationToken cancellationToken = default)
+        public async Task<PaginationResult<Job>> GetAllAsync(IJobQuerySpecification query, CancellationToken cancellationToken = default)
         {
             int totalJobsCount = 0;
 
-            IQueryable<Job> jobQuery = _context.Jobs;
+            IQueryable<Job> jobQuery = _context.Jobs
+                .Include(j => j.Checklist)
+                .Include(j => j.Attachments);
 
             foreach (var job in jobQuery)
             {
@@ -98,11 +100,12 @@ namespace Jobs.Infrastructure.Repositories
                 }
             }
 
-            return await jobQuery.Include(j => j.Checklist)
-                                 .Include(j => j.Attachments)
-                              .Skip((query.Page -1) * query.PageSize)
-                              .Take(query.PageSize)
-                              .ToListAsync(cancellationToken);
+            var items = await jobQuery
+                .Skip((query.Page - 1) * query.PageSize)
+                .Take(query.PageSize)
+                .ToListAsync(cancellationToken); //Calling .ToListAsync to execute the query and retrieve the results
+
+            return PaginationResult<Job>.Create(items, query.Page, query.PageSize, totalJobsCount);
         }   
 
         public async Task<Job?> GetByIdAsync(Guid jobId, CancellationToken cancellationToken = default)

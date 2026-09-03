@@ -1,6 +1,7 @@
-﻿using ScheduleDispatch.API.DTOs;
+﻿using System.Linq;
+using Jobs.Domain.Interfaces;
 
-namespace ScheduleDispatch.API.Models.Responses
+namespace Jobs.Domain.Models
 {
     public sealed record PaginationResult<T> : ICollectionResponse<T>
     {
@@ -23,16 +24,19 @@ namespace ScheduleDispatch.API.Models.Responses
         public bool HasPreviousPage => Page > 1;
         public bool HasNextPage => Page < TotalPages;
 
-        public static async Task<PaginationResult<T>> CreateAsync(IQueryable<T> source, int page, int pageSize)
+        public static PaginationResult<T> Create(List<T> items,
+            int page,
+            int pageSize,
+            int totalCount)
         {
-            int count = await source.CountAsync();
-            var items = await source.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+            //int count = source.Count();
+            //var items = source.Skip((page - 1) * pageSize).Take(pageSize).ToList();
             return new PaginationResult<T>
             {
                 Items = items,
                 Page = page,
                 PageSize = pageSize,
-                TotalCount = count
+                TotalCount = totalCount
             };
         }
 

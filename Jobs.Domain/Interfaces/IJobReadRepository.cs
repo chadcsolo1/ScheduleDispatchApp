@@ -11,7 +11,7 @@ namespace Jobs.Domain.Interfaces
     public interface IJobReadRepository
     {
         //Task<IReadOnlyList<Job>> GetAllAsync(string? search, JobType? jobType = null, Location? location = null, Sort? sort = null, CancellationToken cancellationToken = default);
-        Task<IReadOnlyList<Job>> GetAllAsync(IJobQuerySpecification queryParameters, CancellationToken cancellationToken = default);
+        Task<PaginationResult<Job>> GetAllAsync(IJobQuerySpecification queryParameters, CancellationToken cancellationToken = default);
         
         Task<Job?> GetByIdAsync(Guid jobId, CancellationToken cancellationToken = default);
 
