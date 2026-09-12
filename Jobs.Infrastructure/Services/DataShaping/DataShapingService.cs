@@ -14,17 +14,17 @@ namespace Jobs.Infrastructure.Services.DataShaping
         // expensive, so caching avoids repeating that cost on every request.
         private static readonly ConcurrentDictionary<Type, PropertyInfo[]> PropertyCache = new();
 
-        public List<ExpandoObject> ShapeData<T>(IEnumerable<T> entities, string fields)
+        public List<ExpandoObject> ShapeData<T>(IEnumerable<T> entities, string? fields)
         {
                  // Parse the comma-separated "fields" string (e.g. "Id,Name,City") into a normalized set of field names.
             // - Split on commas and remove empty entries (handles trailing/extra commas).
             // - Trim whitespace around each field name.
             // - Store in a HashSet with case-insensitive comparison so lookups are fast (O(1)) and case doesn't matter.
             
-            var fieldSet = fields
+            var fieldSet = fields?
                 .Split(',', StringSplitOptions.RemoveEmptyEntries)
                 .Select(f => f.Trim())
-                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+                .ToHashSet(StringComparer.OrdinalIgnoreCase) ?? new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
             // Get all of the properties for the type T (Job, Organization, User, etc.)
             // We are going to only keep properties listed in fields parameter.
@@ -37,9 +37,15 @@ namespace Jobs.Infrastructure.Services.DataShaping
             // be reused instead of being recalculated for the new fields.
             PropertyInfo[] properties = PropertyCache.GetOrAdd(
                 typeof(T),
-                t => t.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                t => t.GetProperties(BindingFlags.Public | BindingFlags.Instance));
+
+            if (fieldSet.Any())
+            {
+                properties = properties
                     .Where(p => fieldSet.Contains(p.Name))
-                    .ToArray());
+                    .ToArray();
+            }
+                    
 
             // Prepare the list that will hold one shaped (dynamic) object per input entity.
             List<ExpandoObject> shapedData = [];

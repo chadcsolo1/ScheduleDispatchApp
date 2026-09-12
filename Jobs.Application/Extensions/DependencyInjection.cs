@@ -18,6 +18,7 @@ using Jobs.Domain.Models;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Text;
 
 namespace Jobs.Application.Extensions{
@@ -42,7 +43,7 @@ namespace Jobs.Application.Extensions{
 
             // Register query handlers
             //services.AddScoped<IQueryHandler<GetAllJobsQuery, IEnumerable<JobDto>>, GetAllJobsQueryHandler>();
-            services.AddScoped<IQueryHandler<GetAllJobsQuery, PaginationResult<JobDto>>, GetAllJobsQueryHandler>();
+            services.AddScoped<IQueryHandler<GetAllJobsQuery, PaginationResult<ExpandoObject>>, GetAllJobsQueryHandler>();
             services.AddScoped<IQueryHandler<GetJobByIdQuery, JobDto?>, GetJobByIdQueryHandler>();
             services.AddScoped<IQueryHandler<GetJobsByStatusQuery, IReadOnlyList<JobDto>>, GetJobsByStatusQueryHandler>();
             services.AddScoped<IQueryHandler<GetJobsForCustomerQuery, IReadOnlyList<JobDto>>, GetJobsForCustomerQueryHandler>();

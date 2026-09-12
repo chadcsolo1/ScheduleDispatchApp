@@ -2,20 +2,24 @@
 using Jobs.Domain.Enums;
 using Jobs.Domain.Interfaces;
 using Jobs.Domain.Models;
+using Jobs.Infrastructure.Services.DataShaping;
 using Microsoft.EntityFrameworkCore;
+using System.Dynamic;
 
 namespace Jobs.Infrastructure.Repositories
 {
     internal class JobReadRepository : IJobReadRepository
     {
         private readonly JobsDbContext _context;
+        private readonly DataShapingService _dataShapingService;
 
-        public JobReadRepository(JobsDbContext context)
+        public JobReadRepository(JobsDbContext context, DataShapingService dataShapingService)
         {
             _context = context;
+            _dataShapingService = dataShapingService;
         }
 
-        public async Task<PaginationResult<Job>> GetAllAsync(IJobQuerySpecification query, CancellationToken cancellationToken = default)
+        public async Task<PaginationResult<ExpandoObject>> GetAllAsync(IJobQuerySpecification query, CancellationToken cancellationToken = default)
         {
             int totalJobsCount = 0;
 
@@ -105,7 +109,16 @@ namespace Jobs.Infrastructure.Repositories
                 .Take(query.PageSize)
                 .ToListAsync(cancellationToken); //Calling .ToListAsync to execute the query and retrieve the results
 
-            return PaginationResult<Job>.Create(items, query.Page, query.PageSize, totalJobsCount);
+            var paginationResult = new PaginationResult<ExpandoObject>
+            {
+                Items = _dataShapingService.ShapeData(items, query.Fields),
+                Page = query.Page,
+                PageSize = query.PageSize,
+                TotalCount = totalJobsCount
+            };
+
+            return paginationResult;
+            //PaginationResult<Job>.Create(items, query.Page, query.PageSize, totalJobsCount);
         }   
 
         public async Task<Job?> GetByIdAsync(Guid jobId, CancellationToken cancellationToken = default)

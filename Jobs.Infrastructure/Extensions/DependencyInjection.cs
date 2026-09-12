@@ -8,6 +8,7 @@ using Jobs.Infrastructure.Services.FileStorage;
 using Jobs.Domain.Interfaces;
 using Jobs.Infrastructure.Repositories;
 using Jobs.Infrastructure.Persistence;
+using Jobs.Infrastructure.Services.DataShaping;
 
 namespace Jobs.Infrastructure.Extensions
 {
@@ -25,6 +26,7 @@ namespace Jobs.Infrastructure.Extensions
             services.AddScoped<IJobRepository, JobRepository>();
             services.AddScoped<IJobReadRepository, JobReadRepository>();
             services.AddScoped<IUnitOfWork, EfUnitOfWork>();
+            services.AddTransient<DataShapingService>();
 
             if (env.IsDevelopment())
             {

@@ -4,6 +4,7 @@ using Jobs.Domain.Models;
 using Jobs.Domain.ValueObjects;
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Text;
 
 namespace Jobs.Domain.Interfaces
@@ -11,7 +12,7 @@ namespace Jobs.Domain.Interfaces
     public interface IJobReadRepository
     {
         //Task<IReadOnlyList<Job>> GetAllAsync(string? search, JobType? jobType = null, Location? location = null, Sort? sort = null, CancellationToken cancellationToken = default);
-        Task<PaginationResult<Job>> GetAllAsync(IJobQuerySpecification queryParameters, CancellationToken cancellationToken = default);
+        Task<PaginationResult<ExpandoObject>> GetAllAsync(IJobQuerySpecification queryParameters, CancellationToken cancellationToken = default);
         
         Task<Job?> GetByIdAsync(Guid jobId, CancellationToken cancellationToken = default);
 

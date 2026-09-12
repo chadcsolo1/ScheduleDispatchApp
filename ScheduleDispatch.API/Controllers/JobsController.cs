@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using ScheduleDispatch.API.Models.Requests;
 using ScheduleDispatch.API.Models.Responses;
+using System.Dynamic;
 
 namespace ScheduleDispatch.API.Controllers
 {
@@ -107,9 +108,10 @@ namespace ScheduleDispatch.API.Controllers
 
          // ------------------------------------------------------------
         // GET ALL JOBS
+        //Task<ActionResult<IEnumerable<JobResponse>>>
         // ------------------------------------------------------------
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<JobResponse>>> GetJobs(
+        public async Task<IActionResult> GetJobs(
             [FromQuery] string? searchTerm,
             [FromQuery] string? jobTypeName,
             [FromQuery] string? jobTypeCategory,
@@ -118,6 +120,7 @@ namespace ScheduleDispatch.API.Controllers
             [FromQuery] int? zipCode,
             [FromQuery] string? sortBy,
             [FromQuery] string? sortDirection,
+            [FromQuery] string? fields,
             [FromQuery] int page = 1,
             [FromQuery] int pageSize = 10,
             CancellationToken cancellationToken = default)
@@ -132,36 +135,37 @@ namespace ScheduleDispatch.API.Controllers
                     ZipCode = zipCode,
                     SortBy = sortBy,
                     SortDirection = sortDirection,
+                    Fields = fields,
                     Page = page,
                     PageSize = pageSize
                 };
 
             var dtos = await _queryDispatcher
-                .DispatchAsync<GetAllJobsQuery, PaginationResult<JobDto>>(query, cancellationToken);
+                .DispatchAsync<GetAllJobsQuery, PaginationResult<ExpandoObject>>(query, cancellationToken);
 
-            var response = dtos.Items.Select(dto => new JobResponse
-            {
-                Id = dto.Id,
-                CustomerId = dto.CustomerId,
-                Description = dto.Description,
-                Status = dto.Status,
-                CreatedAt = dto.CreatedAt,
-                ScheduledFor = dto.ScheduledFor,
-                AssignedTechnicianId = dto.AssignedTechnicianId,
-                AddressLine1 = dto.AddressLine1,
-                AddressLine2 = dto.AddressLine2,
-                City = dto.City,
-                State = dto.State,
-                ZipCode = dto.ZipCode,
-                JobTypeName = dto.JobTypeName,
-                JobTypeCategory = dto.JobTypeCategory,
-                JobTypeEstimatedDuration = dto.JobTypeEstimatedDuration,
-                CheckList = dto.Checklist,
-                Attachments = dto.Attachments,
-                RequiredSkills = dto.RequiredSkills
-            });
+            //var response = dtos.Items.Select(dto => new JobResponse
+            //{
+            //    Id = dto.
+            //    CustomerId = dto.CustomerId,
+            //    Description = dto.Description,
+            //    Status = dto.Status,
+            //    CreatedAt = dto.CreatedAt,
+            //    ScheduledFor = dto.ScheduledFor,
+            //    AssignedTechnicianId = dto.AssignedTechnicianId,
+            //    AddressLine1 = dto.AddressLine1,
+            //    AddressLine2 = dto.AddressLine2,
+            //    City = dto.City,
+            //    State = dto.State,
+            //    ZipCode = dto.ZipCode,
+            //    JobTypeName = dto.JobTypeName,
+            //    JobTypeCategory = dto.JobTypeCategory,
+            //    JobTypeEstimatedDuration = dto.JobTypeEstimatedDuration,
+            //    CheckList = dto.Checklist,
+            //    Attachments = dto.Attachments,
+            //    RequiredSkills = dto.RequiredSkills
+            //});
 
-            return Ok(response);
+            return Ok(dtos);
         }
 
         // ------------------------------------------------------------

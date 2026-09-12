@@ -2,6 +2,7 @@
 using Jobs.Domain.Interfaces;
 using Jobs.Infrastructure.Persistence;
 using Jobs.Infrastructure.Repositories;
+using Jobs.Infrastructure.Services.DataShaping;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,6 +24,7 @@ namespace Jobs.Infrastructure.Extensions
                 services.AddScoped<IJobRepository, JobRepository>();
                 services.AddScoped<IJobReadRepository, JobReadRepository>();
                 services.AddScoped<IUnitOfWork, EfUnitOfWork>();
+                services.AddTransient<DataShapingService>();
 
                 return services;
             }
