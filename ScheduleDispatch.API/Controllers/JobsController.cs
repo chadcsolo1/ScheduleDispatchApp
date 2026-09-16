@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using ScheduleDispatch.API.Models.Requests;
 using ScheduleDispatch.API.Models.Responses;
+using ScheduleDispatch.API.Services;
 using System.Dynamic;
 
 namespace ScheduleDispatch.API.Controllers
@@ -23,11 +24,13 @@ namespace ScheduleDispatch.API.Controllers
     {
         private readonly ICommandDispatcher _commandDispatcher;
         private readonly IQueryDispatcher _queryDispatcher;
+        private readonly LinkService _linkService;
 
-        public JobsController(ICommandDispatcher commandDispatcher, IQueryDispatcher queryDispatcher)
+        public JobsController(ICommandDispatcher commandDispatcher, IQueryDispatcher queryDispatcher, LinkService linkService)
         {
             _commandDispatcher = commandDispatcher;
             _queryDispatcher = queryDispatcher;
+            _linkService = linkService;
         }
 
                 // ------------------------------------------------------------
@@ -58,7 +61,8 @@ namespace ScheduleDispatch.API.Controllers
             {
                 JobId = result.Id,
                 CreatedAt = result.CreatedAt,
-                Status = result.Status
+                Status = result.Status,
+                Links = CreateLinksForJob(result.Id.ToString(), null)
             };
 
             //return CreatedAtAction(nameof(GetJobByIdQuery), new { id = result.Id }, response);
@@ -100,7 +104,8 @@ namespace ScheduleDispatch.API.Controllers
                 JobTypeEstimatedDuration = dto.JobTypeEstimatedDuration,
                 CheckList = dto.Checklist,
                 Attachments = dto.Attachments,
-                RequiredSkills = dto.RequiredSkills
+                RequiredSkills = dto.RequiredSkills,
+                Links = CreateLinksForJob(id.ToString(), null)
             };
 
             return Ok(response);
@@ -308,6 +313,19 @@ namespace ScheduleDispatch.API.Controllers
                 .DispatchAsync<DeleteJobCommand, bool>(command, cancellationToken);
 
             return NoContent();
+        }
+
+        private List<LinkDto> CreateLinksForJob(string id, string? fields)
+        {
+                List<LinkDto> links = new()
+                {
+                    _linkService.Create(nameof(GetJobById), "self", HttpMethods.Get, new { id }),
+                    _linkService.Create(nameof(UpdateJob), "update", HttpMethods.Put, new { id }),
+                    _linkService.Create(nameof(DeleteJob), "delete", HttpMethods.Delete, new { id })
+                    //_linkService.Create(nameof(GetJobById), "self", HttpMethods.Get, new { id })
+                };
+
+            return links;
         }
     }
 }

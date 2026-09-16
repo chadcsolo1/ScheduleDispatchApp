@@ -23,6 +23,11 @@ namespace Jobs.Infrastructure.Repositories
         {
             int totalJobsCount = 0;
 
+            if (!_dataShapingService.Validate<Job>(query.Fields))
+            {
+                throw new ArgumentException("Invalid fields specified for data shaping.");
+            }
+
             IQueryable<Job> jobQuery = _context.Jobs
                 .Include(j => j.Checklist)
                 .Include(j => j.Attachments);
@@ -111,7 +116,7 @@ namespace Jobs.Infrastructure.Repositories
 
             var paginationResult = new PaginationResult<ExpandoObject>
             {
-                Items = _dataShapingService.ShapeData(items, query.Fields),
+                Items = _dataShapingService.ShapeCollectionData(items, query.Fields),
                 Page = query.Page,
                 PageSize = query.PageSize,
                 TotalCount = totalJobsCount

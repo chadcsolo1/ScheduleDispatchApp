@@ -1,6 +1,7 @@
 using Jobs.Application.Extensions;
 using Jobs.Infrastructure.Extensions;
 using ScheduleDispatch.API.Middleware;
+using ScheduleDispatch.API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +26,9 @@ builder.Services.AddOpenApi();
 builder.Services.AddSwaggerGen();
 builder.Services.AddEndpointsApiExplorer();
 
+// Add custom application services (e.g., LinkService)
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddTransient<LinkService>();
 // Register Application Layer (Commands, Queries, Dispatchers)
 builder.Services.AddJobsApplication();
 

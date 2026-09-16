@@ -5,5 +5,6 @@
         public Guid JobId { get; init; }
         public DateTime CreatedAt { get; init; }
         public string Status { get; init; } = string.Empty;
+        public List<LinkDto>? Links { get; set; }
     }
 }
