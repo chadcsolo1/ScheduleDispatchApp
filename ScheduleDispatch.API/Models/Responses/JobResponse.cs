@@ -1,9 +1,10 @@
 ﻿using Jobs.Application.DTOs;
 using Jobs.Domain.Interfaces;
+using Jobs.Domain.Models;
 
 namespace ScheduleDispatch.API.Models.Responses
 {
-    public sealed class JobResponse 
+    public sealed class JobResponse : ILinksResponse
     {
         //: ICollectionResponse<JobResponse>
         public Guid Id { get; init; }

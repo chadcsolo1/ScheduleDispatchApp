@@ -148,6 +148,8 @@ namespace ScheduleDispatch.API.Controllers
             var dtos = await _queryDispatcher
                 .DispatchAsync<GetAllJobsQuery, PaginationResult<ExpandoObject>>(query, cancellationToken);
 
+            dtos.Links = CreateLinksForJobs(query);
+
             //var response = dtos.Items.Select(dto => new JobResponse
             //{
             //    Id = dto.
@@ -313,6 +315,22 @@ namespace ScheduleDispatch.API.Controllers
                 .DispatchAsync<DeleteJobCommand, bool>(command, cancellationToken);
 
             return NoContent();
+        }
+
+        private List<LinkDto> CreateLinksForJobs(GetAllJobsQuery paramaters)
+        {
+            List<LinkDto> links = 
+            [
+                _linkService.Create(nameof(GetJobs), "self", HttpMethods.Get, new{
+                    page = paramaters.Page,
+                    pageSize = paramaters.PageSize,
+                    fields = paramaters.Fields,
+                    search = paramaters.SearchTerm
+                })
+            ];
+
+
+            return links;
         }
 
         private List<LinkDto> CreateLinksForJob(string id, string? fields)

@@ -1,4 +1,5 @@
-﻿using ScheduleDispatch.API.Models.Responses;
+﻿using Jobs.Domain.Models;
+using ScheduleDispatch.API.Models.Responses;
 
 namespace ScheduleDispatch.API.Services
 {

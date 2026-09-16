@@ -1,4 +1,8 @@
-﻿namespace ScheduleDispatch.API.Models.Responses
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Jobs.Domain.Models
 {
     public sealed class LinkDto
     {
