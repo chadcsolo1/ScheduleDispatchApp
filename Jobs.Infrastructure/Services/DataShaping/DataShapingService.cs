@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Jobs.Domain.Models;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Dynamic;
@@ -78,7 +79,7 @@ namespace Jobs.Infrastructure.Services.DataShaping
         /// <param name="entities"></param>
         /// <param name="fields"></param>
         /// <returns></returns>
-        public List<ExpandoObject> ShapeCollectionData<T>(IEnumerable<T> entities, string? fields)
+        public List<ExpandoObject> ShapeCollectionData<T>(IEnumerable<T> entities, string? fields, Func<T, List<LinkDto>>? linksFactory = null)
         {
                  // Parse the comma-separated "fields" string (e.g. "Id,Name,City") into a normalized set of field names.
             // - Split on commas and remove empty entries (handles trailing/extra commas).
@@ -126,6 +127,12 @@ namespace Jobs.Infrastructure.Services.DataShaping
                 foreach (var prop in properties)
                 {
                     shapedObject[prop.Name] = prop.GetValue(entity);
+                }
+
+                //Hyper Media Links
+                if (linksFactory is not null)
+                {
+                    shapedObject["links"] = linksFactory(entity);
                 }
 
                 // Cast the dictionary back to ExpandoObject and add it to the result list.

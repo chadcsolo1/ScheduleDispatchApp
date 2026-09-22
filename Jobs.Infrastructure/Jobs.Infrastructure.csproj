@@ -10,11 +10,13 @@
     <Folder Include="DTOs\" />
     <Folder Include="Interceptors\" />
     <Folder Include="Persistence\Seed\" />
+    <Folder Include="Services\HyperMedia\" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.3.11" />
     <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="2.3.11" />
+    <PackageReference Include="Microsoft.AspNetCore.Routing" Version="2.3.13" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.9" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.9">
       <PrivateAssets>all</PrivateAssets>

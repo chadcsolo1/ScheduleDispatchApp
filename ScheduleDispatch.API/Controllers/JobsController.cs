@@ -148,7 +148,7 @@ namespace ScheduleDispatch.API.Controllers
             var dtos = await _queryDispatcher
                 .DispatchAsync<GetAllJobsQuery, PaginationResult<ExpandoObject>>(query, cancellationToken);
 
-            dtos.Links = CreateLinksForJobs(query);
+            dtos.Links = CreateLinksForJobs(query, dtos.HasNextPage, dtos.HasPreviousPage);
 
             //var response = dtos.Items.Select(dto => new JobResponse
             //{
@@ -317,7 +317,7 @@ namespace ScheduleDispatch.API.Controllers
             return NoContent();
         }
 
-        private List<LinkDto> CreateLinksForJobs(GetAllJobsQuery paramaters)
+        private List<LinkDto> CreateLinksForJobs(GetAllJobsQuery paramaters, bool hasNextPage, bool hasPreviousPage)
         {
             List<LinkDto> links = 
             [
@@ -326,8 +326,29 @@ namespace ScheduleDispatch.API.Controllers
                     pageSize = paramaters.PageSize,
                     fields = paramaters.Fields,
                     search = paramaters.SearchTerm
-                })
+                }),
+                _linkService.Create(nameof(CreateJob), "create", HttpMethods.Post)
             ];
+
+            if (hasNextPage) 
+            {
+                links.Add(_linkService.Create(nameof(GetJobs), "nex-page", HttpMethods.Get, new{
+                    page = paramaters.Page + 1,
+                    pageSize = paramaters.PageSize,
+                    fields = paramaters.Fields,
+                    search = paramaters.SearchTerm
+                }));
+            }
+
+            if (hasPreviousPage) 
+            {
+                links.Add(_linkService.Create(nameof(GetJobs), "prev-page", HttpMethods.Get, new{
+                    page = paramaters.Page - 1,
+                    pageSize = paramaters.PageSize,
+                    fields = paramaters.Fields,
+                    search = paramaters.SearchTerm
+                }));
+            }
 
 
             return links;

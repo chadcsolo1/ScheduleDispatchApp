@@ -13,7 +13,7 @@ namespace ScheduleDispatch.API.Services
             object? values = null,
             string? controller = null)
         {
-            string? href = linkGenerator.GetPathByAction(
+            string? href = linkGenerator.GetUriByAction(
                 httpContextAccessor.HttpContext!,
                 endpointNmae,
                 controller,
