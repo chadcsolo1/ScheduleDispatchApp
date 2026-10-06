@@ -15,6 +15,7 @@ using ScheduleDispatch.API.Models.Requests;
 using ScheduleDispatch.API.Models.Responses;
 using ScheduleDispatch.API.Services;
 using System.Dynamic;
+using System.Net.Mime;
 
 namespace ScheduleDispatch.API.Controllers
 {
@@ -116,6 +117,7 @@ namespace ScheduleDispatch.API.Controllers
         //Task<ActionResult<IEnumerable<JobResponse>>>
         // ------------------------------------------------------------
         [HttpGet]
+        [Produces(MediaTypeNames.Application.Json, CustomMediaTypeNames.Application.HateosJson)]
         public async Task<IActionResult> GetJobs(
             [FromQuery] string? searchTerm,
             [FromQuery] string? jobTypeName,
@@ -128,6 +130,7 @@ namespace ScheduleDispatch.API.Controllers
             [FromQuery] string? fields,
             [FromQuery] int page = 1,
             [FromQuery] int pageSize = 10,
+            [FromHeader(Name = "Accept")] string? acceptHeader = null,
             CancellationToken cancellationToken = default)
         {
                 var query = new GetAllJobsQuery
@@ -148,8 +151,11 @@ namespace ScheduleDispatch.API.Controllers
             var dtos = await _queryDispatcher
                 .DispatchAsync<GetAllJobsQuery, PaginationResult<ExpandoObject>>(query, cancellationToken);
 
-            dtos.Links = CreateLinksForJobs(query, dtos.HasNextPage, dtos.HasPreviousPage);
+            if (acceptHeader == CustomMediaTypeNames.Application.HateosJson)
+            {
 
+                dtos.Links = CreateLinksForJobs(query, dtos.HasNextPage, dtos.HasPreviousPage);
+            }
             //var response = dtos.Items.Select(dto => new JobResponse
             //{
             //    Id = dto.
