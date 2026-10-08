@@ -1,3 +1,4 @@
+using Asp.Versioning;
 using Jobs.Application.Extensions;
 using Jobs.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Mvc;
@@ -21,6 +22,23 @@ builder.Services.AddControllers(options =>
 //builder.Services.AddExceptionHandler<ValidationExceptionHandler>();
 //builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
+//Error Handling Middleware
+builder.Services.AddApiVersioning(options =>
+{
+    options.DefaultApiVersion = new ApiVersion(1.0);
+    options.AssumeDefaultVersionWhenUnspecified = true;
+    options.ReportApiVersions = true;
+    options.ApiVersionSelector = new DefaultApiVersionSelector(options);
+
+    options.ApiVersionReader = ApiVersionReader.Combine(
+        new MediaTypeApiVersionReader(),
+        new MediaTypeApiVersionReaderBuilder()
+            .Template("{version:apiVersion}")
+            .Build()
+        );
+})
+.AddMvc();
+
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
@@ -42,7 +60,10 @@ builder.Services.Configure<MvcOptions>(options =>
 // Make sure Microsoft.AspNetCore.Mvc.NewtonsoftJson package is referenced in the project file (PackageReference) if not already present.
 
 // If you prefer a safe lookup, replace .First() with .FirstOrDefault() and handle null accordingly.
-
+    formatter.SupportedMediaTypes.Add(CustomMediaTypeNames.Application.JsonV1);
+    formatter.SupportedMediaTypes.Add(CustomMediaTypeNames.Application.JsonV2);
+    formatter.SupportedMediaTypes.Add(CustomMediaTypeNames.Application.HateosJsonV1);
+    formatter.SupportedMediaTypes.Add(CustomMediaTypeNames.Application.HateosJsonV2);
     formatter.SupportedMediaTypes.Add(CustomMediaTypeNames.Application.HateosJson);
 });
 

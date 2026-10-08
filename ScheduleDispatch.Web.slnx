@@ -15,6 +15,11 @@
   <Folder Name="/Shared/">
     <Project Path="SharedKernel/SharedKernel.csproj" />
   </Folder>
+  <Folder Name="/User/">
+    <Project Path="User.Application/User.Application.csproj" Id="3b12acad-022b-4bd0-9693-0dec239a4e6e" />
+    <Project Path="User.Domain/User.Domain.csproj" Id="950f56c7-745b-4559-9094-966c35035098" />
+    <Project Path="User.Infrastructure/User.Infrastructure.csproj" Id="1167e265-3426-4eac-91ee-c5b94e2434d2" />
+  </Folder>
   <Project Path="ScheduleDispatch.UI.Services/ScheduleDispatch.UI.Services.csproj" Id="553447c1-c966-427d-ab4b-b5cacf34b90a" />
   <Project Path="ScheduleDispatch.Web.Client/ScheduleDispatch.Web.Client.csproj" />
   <Project Path="ScheduleDispatch.Web/ScheduleDispatch.Web.csproj" />

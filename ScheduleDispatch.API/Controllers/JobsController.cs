@@ -1,4 +1,5 @@
-﻿using Jobs.Application.Abstractions;
+﻿using Asp.Versioning;
+using Jobs.Application.Abstractions;
 using Jobs.Application.Commands.CreateJob;
 using Jobs.Application.Commands.DeleteJob;
 using Jobs.Application.Commands.UpdateJob;
@@ -117,6 +118,7 @@ namespace ScheduleDispatch.API.Controllers
         //Task<ActionResult<IEnumerable<JobResponse>>>
         // ------------------------------------------------------------
         [HttpGet]
+        [MapToApiVersion(1.0)]
         [Produces(MediaTypeNames.Application.Json, CustomMediaTypeNames.Application.HateosJson)]
         public async Task<IActionResult> GetJobs(
             [FromQuery] string? searchTerm,
